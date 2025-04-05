@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.course import Course as DBCourse
+from app.models.models import Course as DBCourse
 from app.schemas.course import CourseBase
 
 
