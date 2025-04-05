@@ -17,4 +17,4 @@ COPY . .
 EXPOSE ${PORT}
 
 # Command to run the application
-CMD uvicorn app.main:app --reload
+CMD uvicorn app.main:app --host ${HOST} --port ${PORT} --reload
