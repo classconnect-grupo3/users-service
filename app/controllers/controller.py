@@ -23,7 +23,7 @@ def create_user(user: UserBase, db: Session = Depends(get_db)):
     user = create_new_user(db=db, user=user)
 
     if not user:
-        return HTTPException(
+        raise HTTPException(
             status_code=409,
             detail="User with this name and surname already exists",
         )
