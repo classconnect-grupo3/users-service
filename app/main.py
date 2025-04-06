@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.config.database.db_init import initialize_database
+from app.database.db_init import initialize_database
 from app.errors.exception_handlers import configure_exception_handlers
 from app.router.routes import router as api_router
 
