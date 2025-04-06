@@ -1,17 +1,17 @@
 from sqlalchemy.orm import Session
-from app.models.models import Course as DBCourse
-from app.schemas.course import CourseBase
+from app.models.user_model import User as DBUser
+from app.schemas.user import UserBase
 
 
-# Create a course in the database
-def db_create_course(db: Session, course: CourseBase):
-    db_course = DBCourse(title=course.title, description=course.description)
-    db.add(db_course)
+# Create a user in the database
+def db_create_user(db: Session, user: UserBase):
+    db_user = DBUser(name=user.name, surname=user.surname)
+    db.add(db_user)
     db.commit()
-    db.refresh(db_course)
-    return db_course
+    db.refresh(db_user)
+    return db_user
 
 
-# Get all courses from the database
-def db_get_courses(db: Session):
-    return db.query(DBCourse).all()
+# Get all users from the database
+def db_get_users(db: Session):
+    return db.query(DBUser).all()

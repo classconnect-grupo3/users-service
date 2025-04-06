@@ -1,42 +1,40 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.services.service import (
-    create_new_course,
-    get_all_courses,
-)
-from app.schemas.course import CourseBase, CourseResponse, AllCoursesResponse
+
 from app.config.database.db import get_db
 from app.schemas.error_response import ErrorResponse
+from app.schemas.user import AllUsersResponse, UserBase, UserResponse
+from app.services.service import create_new_user, get_all_users
 
 router = APIRouter()
 
 
-# Create a new course (POST request)
+# Create a new user (POST request)
 @router.post(
     "/",
     status_code=201,
     responses={
-        201: {"description": "Course created successfully", "model": CourseResponse},
+        201: {"description": "User created successfully", "model": UserResponse},
         400: {"description": "Bad request error", "model": ErrorResponse},
     },
 )
-def create_course(course: CourseBase, db: Session = Depends(get_db)):
+def create_user(user: UserBase, db: Session = Depends(get_db)):
 
-    course = create_new_course(db=db, course=course)
+    user = create_new_user(db=db, user=user)
 
-    return {"data": course}
+    return {"data": user}
 
 
-# Get all courses (GET request)
+# Get all users (GET request)
 @router.get(
     "/",
-    response_model=AllCoursesResponse,
+    response_model=AllUsersResponse,
     responses={
-        200: {"description": "A list of courses", "model": AllCoursesResponse},
+        200: {"description": "A list of users", "model": AllUsersResponse},
     },
 )
-def get_courses(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db)):
 
-    courses = get_all_courses(db=db)
+    users = get_all_users(db=db)
 
-    return {"data": courses}
+    return {"data": users}

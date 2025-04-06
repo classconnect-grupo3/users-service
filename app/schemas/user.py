@@ -3,13 +3,17 @@ import uuid
 from pydantic import BaseModel
 
 
-class CourseBase(BaseModel):
-    title: str
-    description: str
+class UserBase(BaseModel):
+    name: str
+    surname: str
+    #email: str
+    #password: str
+    #phone_number: str
+    #isAdmin: bool
 
 
 # Pydantic model for returning the course data with ID
-class Course(CourseBase):
+class User(UserBase):
     id: uuid.UUID
 
     class Config:
@@ -17,8 +21,8 @@ class Course(CourseBase):
             True  # Tells Pydantic to treat the SQLAlchemy model as a dictionary
         )
 
-class AllCoursesResponse(BaseModel):
-    data: List[Course]
+class AllUsersResponse(BaseModel):
+    data: List[User]
 
-class CourseResponse(BaseModel):
-    data: Course
+class UserResponse(BaseModel):
+    data: User
