@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
-from app.config.database.db import get_db
+from app.database.db import get_db
+from app.errors.user_errors import UserAlreadyExistsError
 from app.schemas.error_response import ErrorResponse
 from app.schemas.user import AllUsersResponse, UserBase, UserResponse
-from app.services.service import create_new_user, get_all_users
+from app.common.result import Failure
+from app.services.user_service import create_new_user, get_all_users
 
 router = APIRouter()
 
@@ -15,20 +17,23 @@ router = APIRouter()
     responses={
         201: {"description": "User created successfully", "model": UserResponse},
         400: {"description": "Bad request error", "model": ErrorResponse},
-        409: {"description": "Conflict error - user already exists","model": ErrorResponse},
+        409: {
+            "description": "Conflict error - user already exists",
+            "model": ErrorResponse,
+        },
     },
 )
 def create_user(user: UserBase, db: Session = Depends(get_db)):
 
-    user = create_new_user(db=db, user=user)
+    result = create_new_user(db, user)
+    if isinstance(result, Failure):
+        error = result.error
+        if isinstance(error, UserAlreadyExistsError):
+            raise HTTPException(
+                status_code=409, detail=str(error), headers={"X-Error": "Conflict"}
+            )
 
-    if not user:
-        raise HTTPException(
-            status_code=409,
-            detail="User with this name and surname already exists",
-        )
-
-    return {"data": user}
+    return {"data": result.value}
 
 
 # Get all users (GET request)
