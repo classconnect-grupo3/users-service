@@ -11,7 +11,6 @@ router = APIRouter()
 # Create a new user (POST request)
 @router.post(
     "/",
-    status_code=201,
     responses={
         201: {"description": "User created successfully", "model": UserResponse},
         400: {"description": "Bad request error", "model": ErrorResponse},
