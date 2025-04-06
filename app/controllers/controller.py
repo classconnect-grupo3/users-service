@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
+from fastapi import APIRouter, Depends, HTTPException
 from app.config.database.db import get_db
 from app.schemas.error_response import ErrorResponse
 from app.schemas.user import AllUsersResponse, UserBase, UserResponse
@@ -23,9 +22,9 @@ def create_user(user: UserBase, db: Session = Depends(get_db)):
     user = create_new_user(db=db, user=user)
 
     if not user:
-        return ErrorResponse(
+        return HTTPException(
             status_code=409,
-            message="User already exists",
+            detail="User with this name and surname already exists",
         )
 
     return {"data": user}
