@@ -22,6 +22,12 @@ def create_user(user: UserBase, db: Session = Depends(get_db)):
 
     user = create_new_user(db=db, user=user)
 
+    if not user:
+        return ErrorResponse(
+            status_code=409,
+            message="User already exists",
+        )
+
     return {"data": user}
 
 
