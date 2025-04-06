@@ -1,5 +1,5 @@
 # db_init.py
-from app.config.database.db import engine, Base
+from app.database.db import engine, Base
 
 
 def initialize_database():
