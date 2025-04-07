@@ -1,7 +1,8 @@
 # app/services/user_service.py
 from sqlalchemy.orm import Session
+from app.common.db_functions import get_user
 from app.errors.register_errors import UserAlreadyExists
-from app.repositories.register import get_user, db_create_user
+from app.repositories.register import db_create_user
 from app.schemas.user import UserBase
 from app.models.user_model import User
 from app.common.result import Success, Failure, Result

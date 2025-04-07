@@ -3,9 +3,6 @@ from app.models.user_model import User as DBUser
 from app.schemas.user import UserBase
 from app.common.security import hash_password 
 
-def get_user(db: Session, email: str):
-    return db.query(DBUser).filter_by(email=email).first()
-
 
 # Create a user in the database
 def db_create_user(db: Session, user: UserBase):
