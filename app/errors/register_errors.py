@@ -6,5 +6,5 @@ class RegisterUserError(Exception):
 
 
 class UserAlreadyExists(RegisterUserError):
-    def __init__(self, message: str = "User with this name and surname already exists"):
+    def __init__(self, message: str = "User with this email already exists"):
         super().__init__(message, http_status_code=409)
