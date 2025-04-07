@@ -1,13 +1,13 @@
 from typing import List
 import uuid
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
     name: str
     surname: str
-    #email: str
-    #password: str
+    email: EmailStr
+    password: str
     #phone_number: str
     #isAdmin: bool
 
