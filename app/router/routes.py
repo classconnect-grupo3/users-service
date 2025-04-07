@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from app.controllers.controller import router as users_router
+from app.controllers.register_controller import router as register_users_router
 
 router = APIRouter()
 
 
 # Include users router
-router.include_router(users_router, prefix="/users", tags=["users"])
+router.include_router(register_users_router, prefix="/register", tags=["register"])

@@ -37,15 +37,15 @@ def create_user(user: UserBase, db: Session = Depends(get_db)):
 
 
 # Get all users (GET request)
-@router.get(
-    "/",
-    response_model=AllUsersResponse,
-    responses={
-        200: {"description": "A list of users", "model": AllUsersResponse},
-    },
-)
-def get_users(db: Session = Depends(get_db)):
+# @router.get(
+#     "/",
+#     response_model=AllUsersResponse,
+#     responses={
+#         200: {"description": "A list of users", "model": AllUsersResponse},
+#     },
+# )
+# def get_users(db: Session = Depends(get_db)):
 
-    users = get_all_users(db=db)
+#     users = get_all_users(db=db)
 
-    return {"data": users}
+#     return {"data": users}
