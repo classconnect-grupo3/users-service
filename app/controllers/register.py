@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from app.database.db import get_db
-from app.errors.register_errors import UserAlreadyExists
+from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.schemas.error_response import ErrorResponse
 from app.schemas.user import UserBase, UserResponse
 from app.common.result import Failure
@@ -21,6 +21,10 @@ router = APIRouter()
             "description": "User already exists",
             "model": ErrorResponse,
         },
+        502: {
+            "description": "Could not create Firebase user",
+            "model": ErrorResponse,
+        },
     },
 )
 def create_user(user: UserBase, db: Session = Depends(get_db)):
@@ -30,9 +34,14 @@ def create_user(user: UserBase, db: Session = Depends(get_db)):
         error = result.error
         if isinstance(error, UserAlreadyExists):
             raise HTTPException(
-                status_code=error.http_status_code, detail=error.message, headers={"X-Error": "Conflict"}
+                status_code=error.http_status_code,
+                detail=error.message,
+                headers={"X-Error": "Conflict"},
             )
-
+        if isinstance(error, CouldNotCreateFirebaseUser):
+            raise HTTPException(
+                status_code=error.http_status_code,
+                detail=error.message,
+                headers={"X-Error": "FirebaseError"},
+            )
     return {"data": result.value}
-
-

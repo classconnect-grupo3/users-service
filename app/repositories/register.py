@@ -5,13 +5,12 @@ from app.common.security import hash_password
 
 
 # Create a user in the database
-def db_create_user(db: Session, user: UserBase):
-    hashed_password = hash_password(user.password)
+def db_create_user(db: Session, user: UserBase, uid: str):
     db_user = DBUser(
+        uid=uid,
         name=user.name,
         surname=user.surname,
         email=user.email,
-        password=hashed_password,
     )
     db.add(db_user)
     db.commit()
