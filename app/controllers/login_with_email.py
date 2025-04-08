@@ -1,11 +1,9 @@
-from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
-from app.database.db import get_db
-from app.errors.authentication_errors import IncorrectPassword, UserNotFound
-from app.schemas.error_response import ErrorResponse
+from fastapi import APIRouter, HTTPException
 from app.common.result import Failure
 from app.schemas.auth_request import AuthRequest
-from app.services.login_with_email import authenticate_user_with_email
+from app.schemas.error_response import ErrorResponse
+from app.services.login_with_email import verify_email_and_password
+
 
 router = APIRouter()
 
@@ -23,16 +21,9 @@ router = APIRouter()
         },
     },
 )
-def login_user(data: AuthRequest, db: Session = Depends(get_db)):
-    result = authenticate_user_with_email(data, db)
-
+def login_user(email: str, password: str):
+    result = verify_email_and_password(email, password)
     if isinstance(result, Failure):
         error = result.error
-        if isinstance(error, IncorrectPassword):
-            raise HTTPException(
-                status_code=error.http_status_code, detail=error.message
-            )
-        if isinstance(error, UserNotFound):
-            raise HTTPException(
-                status_code=error.http_status_code, detail=error.message
-            )
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    return {"idToken": result.value}  
