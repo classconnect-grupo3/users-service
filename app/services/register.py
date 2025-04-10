@@ -1,4 +1,4 @@
-# app/services/user_service.py
+# app/service/register.py
 from sqlalchemy.orm import Session
 from app.common.db_functions import get_user
 from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
@@ -8,6 +8,7 @@ from app.models.user_model import User
 from app.common.result import Success, Failure, Result
 from firebase_admin import auth
 from firebase_admin import exceptions as firebase_exceptions
+import anyio
 
 
 def create_firebase_user(email: str, password: str):
@@ -21,12 +22,15 @@ def create_firebase_user(email: str, password: str):
         return Failure(CouldNotCreateFirebaseUser())
 
 
-def create_new_user(db: Session, user: UserBase) -> Result[User]:
+async def create_new_user(db: Session, user: UserBase) -> Result[User]:
     existing_user = get_user(db, user.email)
     if existing_user:
         return Failure(UserAlreadyExists())
 
-    firebase_result = create_firebase_user(user.email, user.password)
+    firebase_result = await anyio.to_thread.run_sync(
+        create_firebase_user, user.email, user.password
+    )
+
     if isinstance(firebase_result, Failure):
         return firebase_result
 
