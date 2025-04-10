@@ -10,5 +10,5 @@ class UserAlreadyExists(RegisterUserError):
         super().__init__(message, http_status_code=409)
 
 class CouldNotCreateFirebaseUser(RegisterUserError):
-    def __init__(self, message: str = "Could not create Firebase user"):
+    def __init__(self, message: str):
         super().__init__(message, http_status_code=502)

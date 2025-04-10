@@ -18,8 +18,12 @@ def create_firebase_user(email: str, password: str):
             password=password,
         )
         return Success(user)
-    except firebase_exceptions.FirebaseError:
-        return Failure(CouldNotCreateFirebaseUser())
+    except ValueError as e:
+        # Handle invalid password or other validation errors
+        return Failure(CouldNotCreateFirebaseUser(message=f"Invalid input: {str(e)}"))
+    except firebase_exceptions.FirebaseError as e:
+        # Handle Firebase-specific errors
+        return Failure(CouldNotCreateFirebaseUser(message=f"Firebase error: {str(e)}"))
 
 
 async def create_new_user(db: Session, user: UserBase) -> Result[User]:
