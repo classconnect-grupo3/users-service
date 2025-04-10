@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.user_model import User as DBUser
 from app.schemas.user import UserBase
-from app.common.security import hash_password 
-
 
 # Create a user in the database
 def db_create_user(db: Session, user: UserBase, uid: str):

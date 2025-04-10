@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from app.common.result import Failure
-from app.schemas.auth_request import AuthRequest
 from app.schemas.error_response import ErrorResponse
 from app.services.login_with_email import verify_email_and_password
 
