@@ -27,9 +27,9 @@ router = APIRouter()
         },
     },
 )
-def create_user(user: UserBase, db: Session = Depends(get_db)):
+async def create_user(user: UserBase, db: Session = Depends(get_db)):
 
-    result = create_new_user(db, user)
+    result = await create_new_user(db, user)
     if isinstance(result, Failure):
         error = result.error
         if isinstance(error, UserAlreadyExists):
