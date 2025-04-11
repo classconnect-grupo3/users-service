@@ -1,14 +1,14 @@
 # app/service/register.py
+import anyio
 from sqlalchemy.orm import Session
+from firebase_admin import auth
+from firebase_admin import exceptions as firebase_exceptions
 from app.common.db_functions import get_user
 from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.repositories.register import db_create_user
 from app.schemas.user import UserBase
 from app.models.user_model import User
 from app.common.result import Success, Failure, Result
-from firebase_admin import auth
-from firebase_admin import exceptions as firebase_exceptions
-import anyio
 
 
 def create_firebase_user(email: str, password: str):

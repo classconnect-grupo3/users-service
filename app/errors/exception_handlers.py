@@ -1,7 +1,8 @@
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
-from app.schemas.error_response import ErrorResponse
 from fastapi import FastAPI
+from app.schemas.error_response import ErrorResponse
+
 
 def configure_exception_handlers(app: FastAPI):
     @app.exception_handler(HTTPException)

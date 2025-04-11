@@ -1,5 +1,5 @@
-import requests
 import os
+import requests
 from app.common.result import Success, Failure
 from app.errors.authentication_errors import InvalidCredentialsError
 from app.schemas.auth_request import AuthRequest
