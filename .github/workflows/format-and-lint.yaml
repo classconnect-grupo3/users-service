@@ -50,7 +50,7 @@ jobs:
           chmod 777 coverage
           
           # Run tests with Docker Compose
-          docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from app-test
+          docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from app-test
           
           # Check if coverage.xml exists
           if [ ! -f coverage/coverage.xml ]; then
@@ -72,4 +72,4 @@ jobs:
       
       - name: Clean up Docker resources
         if: always()
-        run: docker-compose -f docker-compose.test.yml down -v
+        run: docker compose -f docker-compose.test.yml down -v
