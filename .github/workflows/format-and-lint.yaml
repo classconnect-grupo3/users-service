@@ -1,4 +1,4 @@
-name: Check Black formatting
+name: Check Black & Pylint
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: ["*"]
 
 jobs:
-  format:
-    name: Black Check
+  lint-and-format:
+    name: Black & Pylint Check
     runs-on: ubuntu-latest
 
     steps:
@@ -28,3 +28,6 @@ jobs:
 
       - name: Run Black (check only)
         run: black --check .
+
+      - name: Run Pylint
+        run: pylint app/
