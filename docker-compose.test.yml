@@ -9,7 +9,8 @@ services:
       - db-test
     volumes:
       - ./:/app
-    command: bash -c "cd /app && python -m pytest -v"
+      - coverage:/app/coverage
+    command: bash -c "cd /app && mkdir -p coverage && python -m pytest --cov=app --cov-report=xml:coverage/coverage.xml --cov-report=term tests/ -v"
     restart: "no"
 
   db-test:
@@ -28,3 +29,4 @@ services:
 
 volumes:
   postgres_test_data:
+  coverage:
