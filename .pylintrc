@@ -11,4 +11,4 @@ max-line-length=88
 
 [MASTER]
 ignore=tests
-init-hook='import sys; sys.path.append("$(pwd)")'
+init-hook='import sys; import os; sys.path.append(os.getcwd())'
