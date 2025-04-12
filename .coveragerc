@@ -1,0 +1,26 @@
+[run]
+source = app
+omit = 
+    tests/*
+    */migrations/*
+    */__init__.py
+
+[report]
+exclude_lines =
+    # Skip any line with a pragma
+    pragma: no cover
+    
+    # Don't complain about abstract methods
+    @abstract
+    
+    # Don't complain about defensive programming
+    raise NotImplementedError
+    pass
+    
+    # Don't complain about debug-only code
+    def __repr__
+    if self\.debug
+    
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError 
