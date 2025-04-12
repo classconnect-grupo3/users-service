@@ -24,8 +24,8 @@ def verify_email_and_password(auth_request: AuthRequest):
     if response.status_code == 200:
         id_token = response.json().get("idToken")
         return Success(id_token)
-    else:
-        error_message = response.json().get("error", {}).get("message", "Unknown error")
-        return Failure(
-            InvalidCredentialsError(message=f"Authentication failed: {error_message}")
-        )
+
+    error_message = response.json().get("error", {}).get("message", "Unknown error")
+    return Failure(
+        InvalidCredentialsError(message=f"Authentication failed: {error_message}")
+    )
