@@ -5,9 +5,9 @@ on:
     workflows: ["Check Black & Pylint"]
     types:
       - completed
-    branches: [main]
+    branches: ["*"]
   pull_request:
-    branches: [main]
+    branches: ["*"]
 
 jobs:
   test:
