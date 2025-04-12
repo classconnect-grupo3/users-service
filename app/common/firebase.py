@@ -1,8 +1,9 @@
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials, initialize_app
 from firebase_admin.exceptions import FirebaseError
-import json
+
 
 def initialize_firebase():
     try:
@@ -10,11 +11,13 @@ def initialize_firebase():
             # Obtener el JSON de las credenciales desde la variable de entorno
             firebase_credentials = os.getenv("FIREBASE_CREDENTIALS")
             if not firebase_credentials:
-                raise ValueError("La variable de entorno 'FIREBASE_CREDENTIALS' no está definida.")
-            
+                raise ValueError(
+                    "La variable de entorno 'FIREBASE_CREDENTIALS' no está definida."
+                )
+
             # Parsear el JSON
             credentials_dict = json.loads(firebase_credentials)
-            
+
             # Crear un objeto de credenciales a partir del diccionario
             cred = credentials.Certificate(credentials_dict)
             initialize_app(cred)

@@ -9,6 +9,7 @@ class UserAlreadyExists(RegisterUserError):
     def __init__(self, message: str = "User with this email already exists"):
         super().__init__(message, http_status_code=409)
 
+
 class CouldNotCreateFirebaseUser(RegisterUserError):
     def __init__(self, message: str):
         super().__init__(message, http_status_code=502)
