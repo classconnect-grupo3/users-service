@@ -18,3 +18,4 @@ pytest
 bcrypt
 email-validator
 firebase-admin
+pylint
