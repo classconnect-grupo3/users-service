@@ -1,0 +1,30 @@
+services:
+  app-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.test
+    depends_on:
+      - db-test
+    volumes:
+      - ./:/app
+    command: bash -c "cd /app && python -m pytest -v"
+    restart: "no"
+
+  db-test:
+    image: postgres:13
+    env_file:
+      - .env.test
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test_db
+    ports:
+      - "5433:5432" # Different port than production
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    restart: "no"
+
+volumes:
+  postgres_test_data:

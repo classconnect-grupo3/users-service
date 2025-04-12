@@ -4,11 +4,16 @@ from app.common.result import Success, Failure
 from app.errors.authentication_errors import InvalidCredentialsError
 from app.schemas.auth_request import AuthRequest
 
+# Get values from environment variables with defaults
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
+FIREBASE_AUTH_URL = os.getenv(
+    "FIREBASE_AUTH_URL",
+    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword",
+)
 
 
 def verify_email_and_password(auth_request: AuthRequest):
-    url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
+    url = FIREBASE_AUTH_URL
     params = {"key": FIREBASE_API_KEY}
     payload = {
         "email": auth_request.email,
