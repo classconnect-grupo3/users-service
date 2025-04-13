@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.common.result import Failure
 from app.database.db import get_db
-from app.errors.register_errors import (CouldNotCreateFirebaseUser,
-                                        UserAlreadyExists)
+from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.schemas.error_response import ErrorResponse
 from app.schemas.user import UserBase, UserResponse
 from app.services.register import create_new_user

@@ -5,8 +5,7 @@ from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.auth_request import AuthRequest
 from app.schemas.error_response import ErrorResponse
-from app.services.login_with_email import (get_user_location,
-                                           verify_email_and_password)
+from app.services.login_with_email import get_user_location, verify_email_and_password
 
 router = APIRouter()
 
