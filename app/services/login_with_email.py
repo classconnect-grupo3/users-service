@@ -17,7 +17,7 @@ FIREBASE_AUTH_URL = os.getenv(
 )
 
 
-def verify_email_and_password(db: Session, auth_request: AuthRequest):
+def verify_email_and_password(auth_request: AuthRequest):
     url = FIREBASE_AUTH_URL
     params = {"key": FIREBASE_API_KEY}
     payload = {
@@ -29,11 +29,7 @@ def verify_email_and_password(db: Session, auth_request: AuthRequest):
     if response.status_code == 200:
         id_token = response.json().get("idToken")
 
-        # Get User location
-        user = get_user(db, auth_request.email)
-        user_location = user.location
-
-        return Success(AuthResult(id_token=id_token, user_location=user_location))
+        return Success(id_token)
 
     error_message = response.json().get("error", {}).get("message", "Unknown error")
 

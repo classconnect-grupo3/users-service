@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pytest import Session
+from app.common.db_functions import get_user
 from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.auth_request import AuthRequest
@@ -24,13 +25,15 @@ router = APIRouter()
     },
 )
 def login_user(auth_request: AuthRequest, db: Session = Depends(get_db)):
-    result = verify_email_and_password(db, auth_request)
+
+    result = verify_email_and_password(auth_request)
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    auth_result = result.value
+    user = get_user(db, auth_request.email)
+    user_location = user.location
     return {
-        "id_token": auth_result.id_token,
-        "user_location": auth_result.user_location,
+        "id_token": result.value,
+        "user_location": user_location,
     }
