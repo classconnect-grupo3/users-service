@@ -8,8 +8,8 @@ class UserBase(BaseModel):
     surname: str
     email: EmailStr
     password: str
-    #phone_number: str
-    #isAdmin: bool
+    # phone_number: str
+    # isAdmin: bool
 
 
 # Pydantic model for returning the course data with ID
@@ -21,8 +21,10 @@ class User(UserBase):
             True  # Tells Pydantic to treat the SQLAlchemy model as a dictionary
         )
 
+
 class AllUsersResponse(BaseModel):
     data: List[User]
+
 
 class UserResponse(BaseModel):
     data: User
