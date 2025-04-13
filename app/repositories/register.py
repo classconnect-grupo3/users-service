@@ -10,6 +10,7 @@ def db_create_user(db: Session, user: UserBase, uid: str):
         name=user.name,
         surname=user.surname,
         email=user.email,
+        location=None
     )
     db.add(db_user)
     db.commit()

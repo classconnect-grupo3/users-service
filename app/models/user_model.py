@@ -9,5 +9,6 @@ class User(Base):
     name = Column(String, nullable=False)
     surname = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=False)
+    location = Column(String, unique=True, nullable=True)
     # phone = Column(String, nullable=True)
     # isAdmin = Column(bool, nullable=True)
