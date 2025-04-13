@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pytest import Session
-from app.common.db_functions import get_user
 from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.auth_request import AuthRequest
