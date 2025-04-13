@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from app.models.user_model import User as DBUser
 from app.schemas.user import UserBase
 

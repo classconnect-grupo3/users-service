@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-from app.controllers.register import router as register_users_router
+
 from app.controllers.login_with_email import router as login_users_router
+from app.controllers.register import router as register_users_router
 
 router = APIRouter()
 

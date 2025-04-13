@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from app.common.firebase import initialize_firebase
 from app.database.db_init import initialize_database
 from app.errors.exception_handlers import configure_exception_handlers

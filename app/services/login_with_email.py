@@ -1,11 +1,12 @@
 import os
+
 import requests
-from app.common.db_functions import get_user
-from app.common.result import Success, Failure
-from app.errors.authentication_errors import InvalidCredentialsError
-from app.schemas.auth_request import AuthRequest
 from sqlalchemy.orm import Session
 
+from app.common.db_functions import get_user
+from app.common.result import Failure, Success
+from app.errors.authentication_errors import InvalidCredentialsError
+from app.schemas.auth_request import AuthRequest
 
 # Get values from environment variables with defaults
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
