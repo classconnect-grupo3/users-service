@@ -16,7 +16,7 @@ router = APIRouter()
     "",
     status_code=200,
     responses={
-        200: {"description": "User authenticated successfully"},
+        200: {"description": "User authenticated successfully", "model": AuthResult},
         404: {"description": "User not found", "model": ErrorResponse},
         401: {
             "description": "Unauthorized: Incorrect password",
