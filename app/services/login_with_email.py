@@ -6,8 +6,6 @@ from app.errors.authentication_errors import InvalidCredentialsError
 from app.schemas.auth_request import AuthRequest
 from sqlalchemy.orm import Session
 
-from app.schemas.auth_result import AuthResult
-
 
 # Get values from environment variables with defaults
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
@@ -36,3 +34,8 @@ def verify_email_and_password(auth_request: AuthRequest):
     return Failure(
         InvalidCredentialsError(message=f"Authentication failed: {error_message}")
     )
+
+
+def get_user_location(db: Session, email: str):
+    user = get_user(db, email)
+    return user.location

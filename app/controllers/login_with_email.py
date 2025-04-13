@@ -5,7 +5,7 @@ from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.auth_request import AuthRequest
 from app.schemas.error_response import ErrorResponse
-from app.services.login_with_email import verify_email_and_password
+from app.services.login_with_email import get_user_location, verify_email_and_password
 
 
 router = APIRouter()
@@ -31,8 +31,8 @@ def login_user(auth_request: AuthRequest, db: Session = Depends(get_db)):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    user = get_user(db, auth_request.email)
-    user_location = user.location
+    user_location = get_user_location(db, auth_request.email)
+
     return {
         "id_token": result.value,
         "user_location": user_location,
