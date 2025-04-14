@@ -1,7 +1,6 @@
 import os
 from firebase_admin import auth
-from fastapi import HTTPException
-from fastapi import HTTPException, Request
+from fastapi import Request
 
 import requests
 from sqlalchemy.orm import Session
