@@ -9,3 +9,4 @@ router = APIRouter()
 # Include users router
 router.include_router(register_users_router, prefix="/register", tags=["register"])
 router.include_router(login_users_router, prefix="/login", tags=["login"])
+router.include_router(login_users_router, prefix="/users", tags=["users"])
