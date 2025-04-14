@@ -4,13 +4,36 @@ from pytest import Session
 
 from app.common.result import Failure
 from app.database.db import get_db
+from app.schemas.error_response import ErrorResponse
 from app.schemas.location import Location
 from app.services.users import extract_token_from_request, store_location
 
 router = APIRouter()
 
 
-@router.post("/me/location")
+@router.post(
+    "/me/location",
+    status_code=200,
+    responses={
+        200: {"description": "Location stored successfully"},
+        400: {
+            "description": "Bad request. For example, UID not found in token.",
+            "model": ErrorResponse,
+        },
+        401: {
+            "description": "Unauthorized. Possible reasons include:\n"
+            "- Token has expired.\n"
+            "- Token has been revoked.\n"
+            "- Invalid token.\n"
+            "- Invalid email or password.",
+            "model": ErrorResponse,
+        },
+        500: {
+            "description": "Internal server error.",
+            "model": ErrorResponse,
+        },
+    },
+)
 def store_user_location(
     location: Location,
     request: Request,
