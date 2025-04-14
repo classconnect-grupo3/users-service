@@ -24,7 +24,7 @@ def store_user_location(
 
     token = result.value
 
-    result = store_location(db, location, token)
+    result = store_location(db, location.country, token)
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
