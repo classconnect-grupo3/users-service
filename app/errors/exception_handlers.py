@@ -1,6 +1,6 @@
-from fastapi import HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI
+
 from app.schemas.error_response import ErrorResponse
 
 

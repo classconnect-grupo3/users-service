@@ -19,3 +19,4 @@ bcrypt
 email-validator
 firebase-admin
 pylint
+asyncpg
