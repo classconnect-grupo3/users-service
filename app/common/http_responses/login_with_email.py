@@ -10,15 +10,15 @@ login_responses = {
                     "with_location": {
                         "summary": "Example with location",
                         "value": {
-                            "id_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                            "user_location": "Argentina",
+                            "id_token": "String",
+                            "user_location": "String",
                         },
                     },
                     "without_location": {
                         "summary": "Example without location",
                         "value": {
-                            "id_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                            "user_location": None,
+                            "id_token": "String",
+                            "user_location": "This field is returned with NULL",
                         },
                     },
                 }
