@@ -1,4 +1,3 @@
-from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -13,7 +12,7 @@ class UserBase(BaseModel):
 class UserResponseData(BaseModel):
     surname: str
     uid: str
-    location: Optional[str] = None  # Location can be null
+    location: None
     email: EmailStr
     name: str
 
