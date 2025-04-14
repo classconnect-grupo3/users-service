@@ -5,6 +5,11 @@ class AuthenticationError(Exception):
         self.http_status_code = http_status_code
 
 
+class UIDNotFoundError(AuthenticationError):
+    def __init__(self, message: str = "UID not found in token."):
+        super().__init__(message, http_status_code=400)
+
+
 class InvalidCredentialsError(AuthenticationError):
     def __init__(self, message: str = "Invalid email or password."):
         super().__init__(message, http_status_code=401)
@@ -31,8 +36,3 @@ class CertificateFetchError(AuthenticationError):
         message: str = "Failed to fetch public certificates for token verification.",
     ):
         super().__init__(message, http_status_code=500)
-
-
-class UIDNotFoundError(AuthenticationError):
-    def __init__(self, message: str = "UID not found in token."):
-        super().__init__(message, http_status_code=400)
