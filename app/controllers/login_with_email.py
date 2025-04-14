@@ -5,8 +5,8 @@ from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.auth_request import AuthRequest
 from app.schemas.auth_result import AuthResult
-from app.schemas.error_response import ErrorResponse
 from app.services.login_with_email import get_user_location, verify_email_and_password
+from app.common.http_responses.login_with_email import login_responses
 
 router = APIRouter()
 
@@ -15,14 +15,7 @@ router = APIRouter()
 @router.post(
     "",
     status_code=200,
-    responses={
-        200: {"description": "User authenticated successfully", "model": AuthResult},
-        404: {"description": "User not found", "model": ErrorResponse},
-        401: {
-            "description": "Unauthorized: Incorrect password",
-            "model": ErrorResponse,
-        },
-    },
+    responses=login_responses,
 )
 def login_user(auth_request: AuthRequest, db: Session = Depends(get_db)):
 

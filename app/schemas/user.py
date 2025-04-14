@@ -1,6 +1,3 @@
-import uuid
-from typing import List
-
 from pydantic import BaseModel, EmailStr
 
 
@@ -9,23 +6,16 @@ class UserBase(BaseModel):
     surname: str
     email: EmailStr
     password: str
-    # phone_number: str
-    # isAdmin: bool
 
 
-# Pydantic model for returning the course data with ID
-class User(UserBase):
-    id: uuid.UUID
-
-    class Config:
-        from_attributes = (
-            True  # Tells Pydantic to treat the SQLAlchemy model as a dictionary
-        )
-
-
-class AllUsersResponse(BaseModel):
-    data: List[User]
+# Updated Pydantic model for returning user data
+class UserResponseData(BaseModel):
+    surname: str
+    uid: str
+    location: None
+    email: EmailStr
+    name: str
 
 
 class UserResponse(BaseModel):
-    data: User
+    data: UserResponseData
