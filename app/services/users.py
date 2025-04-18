@@ -12,7 +12,7 @@ from app.errors.authentication_errors import (
 
 from app.repositories.users import store_location_db, get_user_by_uid_db, update_user_profile_db, get_user_by_email_db
 from app.schemas.user import UserProfileData
-from app.errors.user_errors import UserNotFoundError, UpdateProfileError
+from app.errors.user_errors import UserNotFoundError, UpdateProfileError, EmailAlreadyInUseError
 
 def store_location(db: Session, location: str, token: str):
     # Validate the token and get the UID
