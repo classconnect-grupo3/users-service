@@ -10,7 +10,7 @@ from app.errors.authentication_errors import (
     UIDNotFoundError,
 )
 
-from app.repositories.users import store_location_db, get_user_by_uid_db, update_user_profile_db
+from app.repositories.users import store_location_db, get_user_by_uid_db, update_user_profile_db, get_user_by_email_db
 from app.schemas.user import UserProfileData
 from app.errors.user_errors import UserNotFoundError, UpdateProfileError
 
@@ -73,6 +73,11 @@ def update_user_profile(db: Session, update_data: UserProfileData, token: str) -
         return result
 
     uid = result.value
+
+    if update_data.email:
+        existing_user = get_user_by_email_db(db, update_data.email)
+        if existing_user and existing_user.uid != uid:
+            return Failure(EmailAlreadyInUseError())
 
     updated_user = update_user_profile_db(db, uid, update_data)
     if not updated_user:
