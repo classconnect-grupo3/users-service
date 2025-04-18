@@ -9,7 +9,7 @@ class UserBase(BaseModel):
 
 
 # Updated Pydantic model for returning user data
-class UserResponseData(BaseModel):
+class UserRegisterResponseData(BaseModel):
     surname: str
     uid: str
     location: None
@@ -17,5 +17,6 @@ class UserResponseData(BaseModel):
     name: str
 
 
-class UserResponse(BaseModel):
-    data: UserResponseData
+class UserRegisterResponse(BaseModel):
+    data: UserRegisterResponseData
+

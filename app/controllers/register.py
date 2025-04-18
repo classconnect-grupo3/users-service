@@ -5,7 +5,7 @@ from app.common.result import Failure
 from app.database.db import get_db
 from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.schemas.error_response import ErrorResponse
-from app.schemas.user import UserBase, UserResponse
+from app.schemas.user import UserBase, UserRegisterResponse
 from app.services.register import create_new_user
 
 router = APIRouter()
@@ -16,7 +16,7 @@ router = APIRouter()
     "",
     status_code=201,
     responses={
-        201: {"description": "User created successfully", "model": UserResponse},
+        201: {"description": "User created successfully", "model": UserRegisterResponse},
         400: {"description": "Bad request error", "model": ErrorResponse},
         409: {
             "description": "User already exists",
