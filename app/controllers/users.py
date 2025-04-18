@@ -78,7 +78,11 @@ def get_current_user_profile(request: Request, db: Session = Depends(get_db),
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    return result.value
+    
+    user: User = result.value
+    profile_data = UserProfileData.from_orm(user)
+    
+    return UserProfileResponse(data=profile_data)
 
 
 @router.patch(
@@ -110,4 +114,9 @@ def update_current_user_profile(
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    return result.value
+    user: User = result.value
+    profile_data = UserProfileData.from_orm(user)
+    
+    return UserProfileResponse(data=profile_data)
+
+
