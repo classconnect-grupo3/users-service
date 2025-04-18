@@ -79,6 +79,11 @@ def update_user_profile(db: Session, update_data: UserProfileData, token: str) -
         if existing_user and existing_user.uid != uid:
             return Failure(EmailAlreadyInUseError())
 
+    try:
+        auth.update_user(uid, email=update_data.email)
+    except Exception as e:
+        return Failure(InvalidTokenError(message=f"Firebase error: {str(e)}"))
+
     updated_user = update_user_profile_db(db, uid, update_data)
     if not updated_user:
         return Failure(UpdateProfileError())
