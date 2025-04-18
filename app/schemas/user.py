@@ -22,10 +22,10 @@ class UserRegisterResponse(BaseModel):
     data: UserRegisterResponseData
 
 class UserProfileData(BaseModel):
-    name: Optional[str]
-    surname: Optional[str]
-    email: Optional[str]
-    location: Optional[str]
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    email: Optional[str] = None 
+    location: Optional[str] = None
 
     model_config = {
         "from_attributes": True  
