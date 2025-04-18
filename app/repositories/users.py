@@ -1,6 +1,6 @@
 from pytest import Session
 from app.schemas.user import UserProfileData
-
+from typing import Optional
 from app.models.user_model import User
 
 
