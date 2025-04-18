@@ -27,8 +27,9 @@ class UserProfileData(BaseModel):
     email: Optional[str]
     location: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True  
+    }
 
 class UserProfileResponse(BaseModel):
     data: UserProfileData
