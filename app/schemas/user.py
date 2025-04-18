@@ -24,7 +24,7 @@ class UserRegisterResponse(BaseModel):
 class UserProfileData(BaseModel):
     name: Optional[str]
     surname: Optional[str]
-    email: EmailOptional[str]
+    email: Optional[str]
     location: Optional[str]
 
 class UserProfileResponse(BaseModel):
