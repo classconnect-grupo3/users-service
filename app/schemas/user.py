@@ -27,5 +27,8 @@ class UserProfileData(BaseModel):
     email: Optional[str]
     location: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 class UserProfileResponse(BaseModel):
     data: UserProfileData
