@@ -90,7 +90,7 @@ def get_current_user_profile(request: Request, db: Session = Depends(get_db),
     response_model=UserProfileResponse,
     status_code=200,
     responses={
-        400: {"model": ErrorResponse, "description": "Invalid input data"},
+        400: {"model": ErrorResponse, "description": "Email already in use by another user"},
         401: {"model": ErrorResponse, "description": "Unauthorized"},
         500: {"model": ErrorResponse, "description": "Server error"},
     },
