@@ -24,3 +24,6 @@ def update_user_profile_db(db: Session, uid: str, profile_data: UserProfileData)
     db.commit()
     db.refresh(user)
     return user
+    
+def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
+    return db.query(User).filter(User.email == email).first()
