@@ -20,3 +20,11 @@ class UserRegisterResponseData(BaseModel):
 class UserRegisterResponse(BaseModel):
     data: UserRegisterResponseData
 
+class UserProfileData(BaseModel):
+    name: Optional[str]
+    surname: Optional[str]
+    email: EmailOptional[str]
+    location: Optional[str]
+
+class UserProfileResponse(BaseModel):
+    data: UserProfileData
