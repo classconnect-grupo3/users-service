@@ -10,9 +10,19 @@ from app.errors.authentication_errors import (
     UIDNotFoundError,
 )
 
-from app.repositories.users import store_location_db, get_user_by_uid_db, update_user_profile_db, get_user_by_email_db
+from app.repositories.users import (
+    store_location_db,
+    get_user_by_uid_db,
+    update_user_profile_db,
+    get_user_by_email_db,
+)
 from app.schemas.user import UserProfileData
-from app.errors.user_errors import UserNotFoundError, UpdateProfileError, EmailAlreadyInUseError
+from app.errors.user_errors import (
+    UserNotFoundError,
+    UpdateProfileError,
+    EmailAlreadyInUseError,
+)
+
 
 def store_location(db: Session, location: str, token: str):
     # Validate the token and get the UID
@@ -53,6 +63,7 @@ def extract_token_from_request(request: Request):
     token = auth_header.split(" ")[1]
     return Success(token)
 
+
 def get_user_profile(db: Session, token: str) -> Success | Failure:
     result = get_uid_from_token(token)
     if isinstance(result, Failure):
@@ -67,7 +78,9 @@ def get_user_profile(db: Session, token: str) -> Success | Failure:
     return Success(user)
 
 
-def update_user_profile(db: Session, update_data: UserProfileData, token: str) -> Success | Failure:
+def update_user_profile(
+    db: Session, update_data: UserProfileData, token: str
+) -> Success | Failure:
     result = get_uid_from_token(token)
     if isinstance(result, Failure):
         return result

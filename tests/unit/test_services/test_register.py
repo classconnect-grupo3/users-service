@@ -66,7 +66,7 @@ class TestRegisterService:
     @pytest.mark.asyncio
     @patch("app.services.register.create_firebase_user")
     async def test_create_user_success(
-        self, mock_create_firebase_user, user,  db_session
+        self, mock_create_firebase_user, user, db_session
     ):
         # Setup mock Firebase user
         mock_user = MagicMock()
