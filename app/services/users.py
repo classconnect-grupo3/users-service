@@ -1,5 +1,8 @@
 from fastapi import Request
-from firebase_admin import auth
+from firebase_admin import (
+    auth,
+    exceptions as firebase_exceptions,
+)
 from pytest import Session
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import (
@@ -94,7 +97,7 @@ def update_user_profile(
 
     try:
         auth.update_user(uid, email=update_data.email)
-    except Exception as e:
+    except firebase_exceptions.FirebaseError as e:
         return Failure(InvalidTokenError(message=f"Firebase error: {str(e)}"))
 
     updated_user = update_user_profile_db(db, uid, update_data)
