@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -20,3 +21,15 @@ class UserRegisterResponseData(BaseModel):
 class UserRegisterResponse(BaseModel):
     data: UserRegisterResponseData
 
+
+class UserProfileData(BaseModel):
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    email: Optional[str] = None
+    location: Optional[str] = None
+
+    model_config = {"from_attributes": True}
+
+
+class UserProfileResponse(BaseModel):
+    data: UserProfileData

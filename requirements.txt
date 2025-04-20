@@ -20,3 +20,4 @@ email-validator
 firebase-admin
 pylint
 asyncpg
+pytest-asyncio
