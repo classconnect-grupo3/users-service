@@ -16,7 +16,10 @@ router = APIRouter()
     "",
     status_code=201,
     responses={
-        201: {"description": "User created successfully", "model": UserRegisterResponse},
+        201: {
+            "description": "User created successfully",
+            "model": UserRegisterResponse,
+        },
         400: {"description": "Bad request error", "model": ErrorResponse},
         409: {
             "description": "User already exists",
