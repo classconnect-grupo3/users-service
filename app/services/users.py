@@ -27,7 +27,7 @@ from app.errors.user_errors import (
 )
 
 
-def store_location(db: Session, location: str, token: str):
+def store_location(db: Session, latitude: float, longitude: float, token: str):
     # Validate the token and get the UID
     result = get_uid_from_token(token)
     if isinstance(result, Failure):
@@ -36,7 +36,7 @@ def store_location(db: Session, location: str, token: str):
     uid = result.value
 
     # Store the location in the database
-    store_location_db(db, uid, location)
+    store_location_db(db, uid, latitude, longitude)
 
     return Success("Location stored successfully")
 

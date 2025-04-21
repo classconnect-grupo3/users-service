@@ -13,7 +13,8 @@ class UserBase(BaseModel):
 class UserRegisterResponseData(BaseModel):
     surname: str
     uid: str
-    location: None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     email: EmailStr
     name: str
 
@@ -26,7 +27,8 @@ class UserProfileData(BaseModel):
     name: Optional[str] = None
     surname: Optional[str] = None
     email: Optional[str] = None
-    location: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
     model_config = {"from_attributes": True}
 
