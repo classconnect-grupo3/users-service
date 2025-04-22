@@ -4,11 +4,10 @@ import os
 import requests
 from sqlalchemy.orm import Session
 
-from app.common.db_functions import get_user
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import InvalidCredentialsError
 from app.schemas.auth_request import AuthRequest
-
+from app.repositories.users import get_user_by_email_db
 
 # Get values from environment variables with defaults
 FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
@@ -40,5 +39,5 @@ def verify_email_and_password(auth_request: AuthRequest):
 
 
 def get_user_location(db: Session, email: str):
-    user = get_user(db, email)
+    user = get_user_by_email_db(db, email)
     return {"latitude": user.latitude, "longitude": user.longitude}
