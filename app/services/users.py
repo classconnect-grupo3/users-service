@@ -18,6 +18,7 @@ from app.repositories.users import (
     get_user_by_uid_db,
     update_user_profile_db,
     get_user_by_email_db,
+    search_users_db,
 )
 from app.schemas.user import UserProfileData
 from app.errors.user_errors import (
