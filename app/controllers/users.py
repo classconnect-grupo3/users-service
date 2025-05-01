@@ -129,3 +129,28 @@ def update_current_user_profile(
     profile_data = UserProfileData.from_orm(user)
 
     return UserProfileResponse(data=profile_data)
+
+
+@router.get(
+    "/users/search",
+    response_model=List[UserProfileResponse],
+    status_code=200,
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        404: {"model": ErrorResponse, "description": "No users found matching your search"},
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def search_users(
+    q: str,  
+    db: Session = Depends(get_db),
+):
+    result = search_users_service(db, q)
+    
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    
+    users = result.value
+
+    return [UserProfileResponse(data=UserProfileData.from_orm(user)) for user in users]
