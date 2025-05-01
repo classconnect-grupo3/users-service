@@ -134,8 +134,7 @@ def update_current_user_profile(
 
 @router.get(
     "/users/search",
-    response_model=List[UserProfileResponse],
-    status_code=200,
+    response_model=List[UserProfileData],
     responses={
         400: {"model": ErrorResponse, "description": "Bad request"},
         404: {"model": ErrorResponse, "description": "No users found matching your search"},
@@ -154,4 +153,6 @@ def search_users(
     
     users = result.value
 
-    return [UserProfileResponse(data=UserProfileData.from_orm(user)) for user in users]
+    user_profiles = [UserProfileData.from_orm(user) for user in users]
+
+    return SearchUsersResponse(data=user_profiles)
