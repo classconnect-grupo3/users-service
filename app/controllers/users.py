@@ -156,4 +156,4 @@ def search_users(
 
     user_profiles = [UserProfileData.from_orm(user) for user in users]
 
-    return SearchUsersResponse(data=user_profiles)
+    return UsersSearchResponse(data=user_profiles)
