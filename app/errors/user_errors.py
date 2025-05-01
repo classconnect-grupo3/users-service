@@ -18,3 +18,7 @@ class UpdateProfileError(UserError):
 class EmailAlreadyInUseError(UserError):
     def __init__(self, message: str = "Email already in use by another user"):
         super().__init__(message, http_status_code=400)
+
+class NoUsersFoundError(UserError):
+    def __init__(self, message: str = "No users found matching your search"):
+        super().__init__(message, http_status_code=404)
