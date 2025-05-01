@@ -38,3 +38,4 @@ class UserProfileResponse(BaseModel):
 
 class UsersSearchResponse(BaseModel):
     data: list[UserProfileData]
+    
