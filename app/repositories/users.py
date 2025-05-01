@@ -30,3 +30,13 @@ def update_user_profile_db(db: Session, uid: str, profile_data: UserProfileData)
 
 def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
+
+def search_users_db(db: Session, query: str) -> list[User]:
+    terms = query.split()
+    
+    filters = []
+    for term in terms:
+        filters.append(User.name.ilike(f"%{term}%"))
+        filters.append(User.surname.ilike(f"%{term}%"))
+    
+    return db.query(User).filter(or_(*filters)).all()
