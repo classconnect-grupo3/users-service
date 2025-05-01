@@ -34,7 +34,7 @@ def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
 
 def search_users_db(db: Session, query: str) -> list[User]:
     terms = [term.strip() for term in query.split() if term.strip()]
-    print("TÉRMINOS DE BÚSQUEDA:", terms)
+
 
     if not terms:
         return []
@@ -47,10 +47,9 @@ def search_users_db(db: Session, query: str) -> list[User]:
 
     final_filter = or_(*filters)
 
-    query_sql = db.query(User).filter(final_filter).distinct()
+    query_sql = db.query(User.uid, User.name, User.surname).filter(final_filter).distinct()
 
-    print("SQL:", str(query_sql))
     results = query_sql.all()
-    print("RESULTADOS:", [u.email for u in results])
+
     
     return results
