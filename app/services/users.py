@@ -25,6 +25,7 @@ from app.errors.user_errors import (
     UserNotFoundError,
     UpdateProfileError,
     EmailAlreadyInUseError,
+    NoUsersFoundError,
 )
 
 
