@@ -34,9 +34,23 @@ def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
 def search_users_db(db: Session, query: str) -> list[User]:
     terms = query.split()
     
-    filters = []
-    for term in terms:
-        filters.append(User.name.ilike(f"%{term}%"))
-        filters.append(User.surname.ilike(f"%{term}%"))
-    
-    return db.query(User).filter(or_(*filters)).all()
+    if not terms:
+        return []
+
+    if len(terms) == 1:
+        term = f"%{terms[0]}%"
+        filters = or_(
+            User.name.ilike(term),
+            User.surname.ilike(term)
+        )
+    else:
+        name = f"%{terms[0]}%"
+        surname = f"%{terms[1]}%"
+        filters = or_(
+            and_(User.name.ilike(name), User.surname.ilike(surname)),
+            and_(User.name.ilike(surname), User.surname.ilike(name)),  # nombre/apellido invertidos
+            User.name.ilike(name),
+            User.surname.ilike(surname)
+        )
+
+    return db.query(User).filter(filters).all()
