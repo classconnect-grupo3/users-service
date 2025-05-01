@@ -14,7 +14,7 @@ from app.services.users import (
     get_user_profile,
     update_user_profile,
 )
-from app.schemas.user import UserProfileResponse, UserProfileData
+from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
 
 router = APIRouter()
 
@@ -133,8 +133,8 @@ def update_current_user_profile(
 
 
 @router.get(
-    "/users/search",
-    response_model=List[UserProfileData],
+    "/search",
+    response_model=UsersSearchResponse,
     responses={
         400: {"model": ErrorResponse, "description": "Bad request"},
         404: {"model": ErrorResponse, "description": "No users found matching your search"},
