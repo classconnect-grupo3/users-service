@@ -14,6 +14,7 @@ from app.services.users import (
     get_user_profile,
     update_user_profile,
     search_users_service,
+    get_user_by_id
 )
 from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
 
@@ -138,14 +139,21 @@ def update_current_user_profile(
     response_model=UsersSearchResponse,
     responses={
         400: {"model": ErrorResponse, "description": "Bad request"},
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
         404: {"model": ErrorResponse, "description": "No users found matching your search"},
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
 def search_users(
     q: str,  
+    request: Request,
     db: Session = Depends(get_db),
 ):
+    result = extract_token_from_request(request)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
     result = search_users_service(db, q)
     
     if isinstance(result, Failure):
@@ -157,3 +165,35 @@ def search_users(
     user_profiles = [UserProfileData.from_orm(user) for user in users]
 
     return UsersSearchResponse(data=user_profiles)
+
+
+@router.get(
+    "/{user_id}",
+    response_model=UserProfileResponse,
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        404: {"model": ErrorResponse, "description": "User not found"},
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def get_user_by_id(
+    user_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    result = extract_token_from_request(request)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    result = get_user_by_id(db, user_id)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    user: User = result.value
+    profile_data = UserProfileData.from_orm(user)
+
+    return UserProfileResponse(data=profile_data)    
