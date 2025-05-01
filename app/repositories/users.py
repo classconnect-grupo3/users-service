@@ -48,9 +48,9 @@ def search_users_db(db: Session, query: str) -> list[User]:
         surname = f"%{terms[1]}%"
         filters = or_(
             and_(User.name.ilike(name), User.surname.ilike(surname)),
-            and_(User.name.ilike(surname), User.surname.ilike(name)),  # nombre/apellido invertidos
+            and_(User.name.ilike(surname), User.surname.ilike(name)),
             User.name.ilike(name),
             User.surname.ilike(surname)
         )
 
-    return db.query(User).filter(filters).all()
+    return db.query(User).filter(filters).distinct().all()
