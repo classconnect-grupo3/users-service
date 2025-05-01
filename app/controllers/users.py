@@ -13,6 +13,7 @@ from app.services.users import (
     store_location,
     get_user_profile,
     update_user_profile,
+    search_users_service,
 )
 from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
 
