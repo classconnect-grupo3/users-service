@@ -53,3 +53,6 @@ def search_users_db(db: Session, query: str) -> list[User]:
 
     
     return results
+
+def get_user_by_id(db: Session, user_id: str):
+    return db.query(User).filter(User.uid == user_id).first()
