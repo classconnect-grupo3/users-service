@@ -105,3 +105,11 @@ def update_user_profile(
         return Failure(UpdateProfileError())
 
     return Success(updated_user)
+
+def search_users_service(db: Session, query: str) -> Success | Failure:
+    users = search_users_db(db, query)
+    
+    if not users:
+        return Failure(NoUsersFoundError())
+    
+    return Success(users)
