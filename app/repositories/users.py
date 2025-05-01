@@ -32,25 +32,23 @@ def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
 def search_users_db(db: Session, query: str) -> list[User]:
-    terms = query.split()
-    
+    terms = [term.strip() for term in query.split() if term.strip()]
+    print("TÉRMINOS DE BÚSQUEDA:", terms)
+
     if not terms:
         return []
 
-    if len(terms) == 1:
-        term = f"%{terms[0]}%"
-        filters = or_(
-            User.name.ilike(term),
-            User.surname.ilike(term)
-        )
-    else:
-        name = f"%{terms[0]}%"
-        surname = f"%{terms[1]}%"
-        filters = or_(
-            and_(User.name.ilike(name), User.surname.ilike(surname)),
-            and_(User.name.ilike(surname), User.surname.ilike(name)),
-            User.name.ilike(name),
-            User.surname.ilike(surname)
-        )
+    filters = []
+    for term in terms:
+        like_term = f"%{term}%"
+        filters.append(User.name.ilike(like_term))
+        filters.append(User.surname.isnot(None)) 
+        filters.append(User.surname.ilike(like_term))
 
-    return db.query(User).filter(filters).distinct().all()
+    final_filter = or_(*filters)
+    query_sql = db.query(User).filter(final_filter).distinct()
+
+    print("SQL:", str(query_sql))
+    results = query_sql.all()
+    print("RESULTADOS:", [u.email for u in results])
+    return results
