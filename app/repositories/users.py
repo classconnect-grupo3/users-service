@@ -2,6 +2,7 @@ from typing import Optional
 from pytest import Session
 from app.schemas.user import UserProfileData
 from app.models.user_model import User
+from sqlalchemy.sql import or_
 
 
 def store_location_db(db: Session, uid: str, latitude: float, longitude: float):
@@ -42,13 +43,14 @@ def search_users_db(db: Session, query: str) -> list[User]:
     for term in terms:
         like_term = f"%{term}%"
         filters.append(User.name.ilike(like_term))
-        filters.append(User.surname.isnot(None)) 
         filters.append(User.surname.ilike(like_term))
 
     final_filter = or_(*filters)
+
     query_sql = db.query(User).filter(final_filter).distinct()
 
     print("SQL:", str(query_sql))
     results = query_sql.all()
     print("RESULTADOS:", [u.email for u in results])
+    
     return results
