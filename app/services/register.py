@@ -6,29 +6,18 @@ from firebase_admin import auth
 from firebase_admin import exceptions as firebase_exceptions
 from sqlalchemy.orm import Session
 
-from app.common.db_functions import get_user
 from app.common.result import Failure, Result, Success
 from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.models.user_model import User
 from app.repositories.register import db_create_user
 from app.schemas.user import UserBase
+from app.repositories.users import get_user_by_email_db
 
 # Use env variable to determine if we're in test mode
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
 
 
 def create_firebase_user(email: str, password: str):
-    # Add test mode bypass
-    if ENVIRONMENT == "testing":
-
-        class MockFirebaseUser:
-            def __init__(self, email):
-                self.uid = f"test-uid-{email.replace('@', '-at-')}"
-                self.email = email
-
-        return Success(MockFirebaseUser(email))
-
-    # Existing implementation for non-test environments
     try:
         user = auth.create_user(
             email=email,
@@ -44,7 +33,7 @@ def create_firebase_user(email: str, password: str):
 
 
 async def create_new_user(db: Session, user: UserBase) -> Result[User]:
-    existing_user = get_user(db, user.email)
+    existing_user = get_user_by_email_db(db, user.email)
     if existing_user:
         return Failure(UserAlreadyExists())
 

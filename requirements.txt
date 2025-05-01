@@ -19,5 +19,6 @@ bcrypt
 email-validator
 firebase-admin
 pylint
+black
 asyncpg
 pytest-asyncio
