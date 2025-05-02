@@ -14,7 +14,7 @@ from app.services.users import (
     get_user_profile,
     update_user_profile,
     search_users_service,
-    get_user_by_id
+    get_user_by_id_service
 )
 from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
 
@@ -187,7 +187,7 @@ def get_user_by_id(
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    result = get_user_by_id(db, user_id)
+    result = get_user_by_id_service(db, user_id)
 
     if isinstance(result, Failure):
         error = result.error
