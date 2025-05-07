@@ -24,6 +24,7 @@ class UserRegisterResponse(BaseModel):
 
 
 class UserProfileData(BaseModel):
+    uid: Optional[str] = None
     name: Optional[str] = None
     surname: Optional[str] = None
     email: Optional[str] = None
@@ -35,3 +36,6 @@ class UserProfileData(BaseModel):
 
 class UserProfileResponse(BaseModel):
     data: UserProfileData
+
+class UsersSearchResponse(BaseModel):
+    data: list[UserProfileData]

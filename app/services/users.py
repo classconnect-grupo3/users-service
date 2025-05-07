@@ -18,12 +18,14 @@ from app.repositories.users import (
     get_user_by_uid_db,
     update_user_profile_db,
     get_user_by_email_db,
+    search_users_db,
 )
 from app.schemas.user import UserProfileData
 from app.errors.user_errors import (
     UserNotFoundError,
     UpdateProfileError,
     EmailAlreadyInUseError,
+    NoUsersFoundError,
 )
 
 
@@ -105,3 +107,20 @@ def update_user_profile(
         return Failure(UpdateProfileError())
 
     return Success(updated_user)
+
+def search_users_service(db: Session, query: str) -> Success | Failure:
+    users = search_users_db(db, query)
+    
+    if not users:
+        return Failure(NoUsersFoundError())
+    
+    return Success(users)
+
+
+def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
+    user = get_user_by_uid_db(db, user_id)
+
+    if not user:
+        return Failure(UserNotFoundError())
+
+    return Success(user)    
