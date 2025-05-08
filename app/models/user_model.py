@@ -10,5 +10,8 @@ class User(Base):
     name = Column(String, nullable=False)
     surname = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=False)
+    phone = Column(String, default=None, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    is_active = Column(bool, default=False, nullable=False)
+    is_blocked = Column(bool, default=False, nullable=False)
