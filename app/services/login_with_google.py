@@ -4,9 +4,13 @@ from app.schemas.auth_google_request import GoogleAuthRequest
 from firebase_admin import auth as firebase_auth
 from app.errors.google_auth_errors import InvalidGoogleTokenError
 from app.common.constants import OK
+from sqlalchemy.orm import Session
 
 
-def authenticate_with_google(request: GoogleAuthRequest):
+def authenticate_with_google(
+    request: GoogleAuthRequest,
+    db: Session,
+):
     try:
         # Verify the token with Firebase
         decoded_token = firebase_auth.verify_id_token(request.id_token)
@@ -22,6 +26,7 @@ def authenticate_with_google(request: GoogleAuthRequest):
         last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
 
         result = create_user_from_google_db(
+            db,
             uid=uid,
             name=first_name,
             surname=last_name,
