@@ -2,9 +2,17 @@ from app.common.result import Success, Failure
 from app.repositories.login_with_google import create_user_from_google_db
 from app.schemas.auth_google_request import GoogleAuthRequest
 from firebase_admin import auth as firebase_auth
-from app.errors.google_auth_errors import InvalidGoogleTokenError
 from app.common.constants import OK
 from sqlalchemy.orm import Session
+from app.errors.google_auth_errors import (
+    ArgumentsMissingError,
+    ValueError,
+    InvalidIdTokenError,
+    ExpiredIdTokenError,
+    RevokedIdTokenError,
+    CertificateFetchError,
+    UserDisabledError,
+)
 
 
 def authenticate_with_google(
@@ -19,7 +27,7 @@ def authenticate_with_google(
         email = decoded_token.get("email")
 
         if not email or not uid:
-            return Failure(InvalidGoogleTokenError("UID or email not found in token."))
+            return Failure(ArgumentsMissingError("UID or email not found in token."))
 
         name_parts = name.strip().split(" ")
         first_name = name_parts[0]
@@ -38,5 +46,15 @@ def authenticate_with_google(
 
         return Success(OK)
 
+    except firebase_auth.InvalidIdTokenError:
+        return Failure(InvalidIdTokenError())
+    except firebase_auth.ExpiredIdTokenError:
+        return Failure(ExpiredIdTokenError())
+    except firebase_auth.RevokedIdTokenError:
+        return Failure(RevokedIdTokenError())
+    except firebase_auth.CertificateFetchError:
+        return Failure(CertificateFetchError())
+    except firebase_auth.UserDisabledError:
+        return Failure(UserDisabledError())
     except Exception as e:
-        return Failure(InvalidGoogleTokenError(e))
+        return Failure(ValueError(f"An unexpected error occurred: {str(e)}"))
