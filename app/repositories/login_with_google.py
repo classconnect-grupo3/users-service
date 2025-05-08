@@ -7,9 +7,11 @@ from app.common.constants import OK
 from app.models.user_model import User
 
 
-def create_user_from_google_db(db: Session, uid: str, name: str, surname: str, email: str):
+def create_user_from_google_db(
+    db: Session, uid: str, name: str, surname: str, email: str
+):
     try:
-        user = get_user_by_email_db(email)
+        user = get_user_by_email_db(db, email)
         if user:
             return Success(OK)  # Ya existe
 
