@@ -11,8 +11,7 @@ from sqlalchemy.orm import Session
 from firebase_admin import auth, exceptions
 
 from app.common.result import Success, Failure
-from app.repositories.register_verify_phone import activate_user_phone
-from app.errors.user_errors import FirebaseTokenInvalidError
+from app.repositories.register_verify_phone import db_activate_user_phone
 
 
 def verify_user_phone_service(id_token: str, db: Session):
