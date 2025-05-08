@@ -16,12 +16,12 @@ from app.errors.google_auth_errors import (
 
 
 def authenticate_with_google(
-    request: GoogleAuthRequest,
+    id_token: str,
     db: Session,
 ):
     try:
         # Verify the token with Firebase
-        decoded_token = firebase_auth.verify_id_token(request.id_token)
+        decoded_token = firebase_auth.verify_id_token(id_token)
         uid = decoded_token.get("uid")
         name = decoded_token.get("name", "")
         email = decoded_token.get("email")
