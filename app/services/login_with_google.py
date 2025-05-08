@@ -1,6 +1,6 @@
 from app.common.result import Success, Failure
 from app.repositories.login_with_google import create_user_from_google_db
-from app.schemas.auth_google_request import GoogleAuthRequest
+from app.schemas.google_auth_request import GoogleAuthRequest
 from firebase_admin import auth as firebase_auth
 from app.common.constants import OK
 from sqlalchemy.orm import Session
@@ -44,7 +44,7 @@ def authenticate_with_google(
         if isinstance(result, Failure):
             return Failure(result.error)
 
-        return Success(OK)
+        return Success(result)
 
     except firebase_auth.InvalidIdTokenError:
         return Failure(InvalidIdTokenError())

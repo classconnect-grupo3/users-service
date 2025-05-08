@@ -13,7 +13,7 @@ def create_user_from_google_db(
     try:
         user = get_user_by_email_db(db, email)
         if user:
-            return Success(OK)  # Ya existe
+            return Success(True)  # Ya estaba registrado
 
         # Si no existe, lo creamos
         new_user = User(
@@ -26,6 +26,6 @@ def create_user_from_google_db(
         db.commit()
         db.refresh(new_user)
 
-        return Success(OK)
+        return Success(False)  # No estaba registrado antes
     except Exception as e:
         return Failure(DatabaseError(str(e)))
