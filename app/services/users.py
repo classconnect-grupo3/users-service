@@ -19,6 +19,7 @@ from app.repositories.users import (
     update_user_profile_db,
     get_user_by_email_db,
     search_users_db,
+    get_users_by_ids_db
 )
 from app.schemas.user import UserProfileData
 from app.errors.user_errors import (
@@ -124,3 +125,11 @@ def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
         return Failure(UserNotFoundError())
 
     return Success(user)    
+
+def get_users_batch_service(db: Session, user_ids: List[str]) -> Success | Failure:
+    users = get_users_by_ids_db(db, user_ids)
+
+    if not users:
+        return Failure(NoUsersFoundError())
+
+    return Success(users)
