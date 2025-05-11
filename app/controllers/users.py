@@ -17,7 +17,7 @@ from app.services.users import (
     get_user_by_id_service,
     get_users_batch_service
 )
-from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse,, UsersBatchRequest
+from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse, UsersBatchRequest
 
 router = APIRouter()
 
