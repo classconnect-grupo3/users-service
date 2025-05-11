@@ -53,3 +53,9 @@ def search_users_db(db: Session, query: str) -> list[User]:
 
     
     return results
+
+def get_users_by_ids_db(db: Session, user_ids: List[str]) -> list[User]:
+    if not users:
+        return None
+
+    return db.query(User).filter(User.uid.in_(user_ids)).all()
