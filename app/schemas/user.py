@@ -39,3 +39,6 @@ class UserProfileResponse(BaseModel):
 
 class UsersSearchResponse(BaseModel):
     data: list[UserProfileData]
+
+class UsersBatchRequest(BaseModel):
+    user_ids: List[str]
