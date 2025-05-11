@@ -1,4 +1,5 @@
 from fastapi import Request
+from typing import List
 from firebase_admin import (
     auth,
     exceptions as firebase_exceptions,
