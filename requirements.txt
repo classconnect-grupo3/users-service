@@ -22,3 +22,4 @@ pylint
 black
 asyncpg
 pytest-asyncio
+newrelic
