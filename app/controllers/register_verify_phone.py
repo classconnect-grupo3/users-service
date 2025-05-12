@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.schemas.token import Token, TokenRequest
+from app.schemas.token import Token
 from app.services.register_verify_phone import verify_user_phone_service
 from sqlalchemy.orm import Session
 
