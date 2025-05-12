@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, Float
+from sqlalchemy import Column, String, Float, Boolean 
 
 from app.database.db import Base
 
@@ -13,5 +14,5 @@ class User(Base):
     phone = Column(String, default=None, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    is_active = Column(bool, default=False, nullable=False)
-    is_blocked = Column(bool, default=False, nullable=False)
+    is_active = Column(Boolean, default=False, nullable=False)
+    is_blocked = Column(Boolean, default=False, nullable=False)
