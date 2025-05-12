@@ -14,9 +14,10 @@ from app.services.users import (
     get_user_profile,
     update_user_profile,
     search_users_service,
-    get_user_by_id_service
+    get_user_by_id_service,
+    get_users_batch_service
 )
-from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
+from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse, UsersBatchRequest
 
 router = APIRouter()
 
@@ -197,3 +198,35 @@ def get_user_by_id(
     profile_data = UserProfileData.from_orm(user)
 
     return UserProfileResponse(data=profile_data)    
+
+@router.post(
+    "/batch",
+    response_model=UsersSearchResponse,
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        404: {"model": ErrorResponse, "description": "No users found for the provided IDs"},
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def get_users_batch(
+    request_data: UsersBatchRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    result = extract_token_from_request(request)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    result = get_users_batch_service(db, request_data.user_ids)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    users = result.value
+
+    user_profiles = [UserProfileData.from_orm(user) for user in users]
+
+    return UsersSearchResponse(data=user_profiles)

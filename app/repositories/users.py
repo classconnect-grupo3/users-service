@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pytest import Session
 from app.schemas.user import UserProfileData
 from app.models.user_model import User
@@ -53,3 +53,6 @@ def search_users_db(db: Session, query: str) -> list[User]:
 
     
     return results
+
+def get_users_by_ids_db(db: Session, user_ids: List[str]) -> list[User]:
+    return db.query(User).filter(User.uid.in_(user_ids)).all()

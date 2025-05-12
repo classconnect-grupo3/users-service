@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr
 
 
@@ -39,3 +39,6 @@ class UserProfileResponse(BaseModel):
 
 class UsersSearchResponse(BaseModel):
     data: list[UserProfileData]
+
+class UsersBatchRequest(BaseModel):
+    user_ids: List[str]
