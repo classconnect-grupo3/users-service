@@ -1,4 +1,4 @@
-from app.schemas.auth_result import AuthResult
+from app.schemas.result_auth import AuthResult
 from app.schemas.error_response import ErrorResponse
 
 login_responses = {

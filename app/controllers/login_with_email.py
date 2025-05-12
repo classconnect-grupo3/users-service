@@ -3,8 +3,8 @@ from pytest import Session
 
 from app.common.result import Failure
 from app.database.db import get_db
-from app.schemas.auth_request import AuthRequest
-from app.schemas.auth_result import AuthResult
+from app.schemas.request_auth import AuthRequest
+from app.schemas.result_auth import AuthResult
 from app.services.login_with_email import get_user_location, verify_email_and_password
 from app.common.http_responses.login_with_email import login_responses
 

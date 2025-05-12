@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import InvalidCredentialsError
-from app.schemas.auth_request import AuthRequest
+from app.schemas.request_auth import AuthRequest
 from app.repositories.users import get_user_by_email_db
 
 # Get values from environment variables with defaults
