@@ -9,7 +9,6 @@ from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyEx
 from app.schemas.error_response import ErrorResponse
 from app.schemas.user import UserBase, UserRegisterResponse
 from app.services.register import create_new_user
-from app.common.http_responses.register import login_responses
 
 router = APIRouter()
 
