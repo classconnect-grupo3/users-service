@@ -4,8 +4,6 @@ from app.schemas.token import Token
 from sqlalchemy.orm import Session
 
 from app.database.db import get_db
-from app.schemas.google_auth_request import GoogleAuthRequest
-from app.schemas.result_auth import AuthResult
 from app.services.login_with_google import authenticate_with_google
 from app.common.result import Failure
 from app.common.http_responses.login_with_google import login_responses
