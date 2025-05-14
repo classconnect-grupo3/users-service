@@ -41,7 +41,7 @@ async def create_new_user(db: Session, user: UserBase) -> Result[User]:
     )
 
     if isinstance(result, Failure):
-        return Failure(result)
+        return result
 
     firebase_user = result.value
 
@@ -54,6 +54,6 @@ async def create_new_user(db: Session, user: UserBase) -> Result[User]:
     )
 
     if isinstance(result, Failure):
-        return Failure(result)
+        return result
 
-    return Success(result)
+    return result
