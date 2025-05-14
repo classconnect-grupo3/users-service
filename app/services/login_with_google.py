@@ -1,6 +1,5 @@
 from app.common.result import Success, Failure
 from app.repositories.login_with_google import create_user_from_google_db
-from app.schemas.google_auth_request import GoogleAuthRequest
 from firebase_admin import auth as firebase_auth
 from app.common.constants import OK
 from sqlalchemy.orm import Session
