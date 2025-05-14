@@ -1,6 +1,6 @@
 from app.common.result import Success, Failure
 from firebase_admin import auth as firebase_auth
-from app.common.constants import OK, OLD_USER
+from app.common.constants import NEW_USER, OK, OLD_USER
 from app.repositories.users import get_user_by_email_db, store_user_in_db
 from sqlalchemy.orm import Session
 from app.errors.google_auth_errors import (
@@ -47,7 +47,7 @@ def authenticate_with_google(
         if isinstance(result, Failure):
             return Failure(result)
 
-        return Success(result)
+        return Success(NEW_USER)  # Nuevo usuario registrado
 
     except firebase_auth.InvalidIdTokenError:
         return Failure(InvalidIdTokenError())
