@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+from app.schemas.google_auth_result import GoogleAuthResult
+from app.schemas.token import Token
 from sqlalchemy.orm import Session
 
 from app.database.db import get_db
@@ -17,14 +19,14 @@ router = APIRouter()
     status_code=200,
     responses=login_responses,
 )
-def login_with_google(request: GoogleAuthRequest, db: Session = Depends(get_db)):
+def login_with_google(request: Token, db: Session = Depends(get_db)):
     result = authenticate_with_google(request.id_token, db)
 
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    return GoogleAuthRequest(
+    return GoogleAuthResult(
         id_token=request.id_token,
         was_already_registered=result.value,
     )
