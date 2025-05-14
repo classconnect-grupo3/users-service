@@ -1,9 +1,9 @@
 from app.common.result import Success, Failure
 from firebase_admin import auth as firebase_auth
-from app.common.constants import NEW_USER, OK, OLD_USER
 from app.repositories.users import get_user_by_email_db, store_user_in_db
+from app.common.constants import NEW_USER, OK, OLD_USER
 from sqlalchemy.orm import Session
-from app.errors.google_auth_errors import (
+from app.errors.firebase_errors import (
     ArgumentsMissingError,
     ValueError,
     InvalidIdTokenError,
