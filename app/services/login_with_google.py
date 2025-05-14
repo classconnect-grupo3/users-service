@@ -14,6 +14,8 @@ from app.errors.firebase_errors import (
 )
 
 
+
+
 def authenticate_with_google(
     id_token: str,
     db: Session,
@@ -49,15 +51,18 @@ def authenticate_with_google(
 
         return Success(NEW_USER)  # New user created
 
-    except firebase_auth.InvalidIdTokenError:
-        return Failure(InvalidIdTokenError())
-    except firebase_auth.ExpiredIdTokenError:
-        return Failure(ExpiredIdTokenError())
-    except firebase_auth.RevokedIdTokenError:
-        return Failure(RevokedIdTokenError())
-    except firebase_auth.CertificateFetchError:
-        return Failure(CertificateFetchError())
-    except firebase_auth.UserDisabledError:
-        return Failure(UserDisabledError())
     except Exception as e:
-        return Failure(ValueError(f"An unexpected error occurred: {str(e)}"))
+        error_msg = str(e).lower()
+        if "invalid" in error_msg:
+            return Failure(InvalidIdTokenError())
+        elif "expired" in error_msg:
+            return Failure(ExpiredIdTokenError())
+        elif "revoked" in error_msg:
+            return Failure(RevokedIdTokenError())
+        elif "certificate fetch" in error_msg or "certificate" in error_msg:
+            return Failure(CertificateFetchError())
+        elif "disabled" in error_msg:
+            return Failure(UserDisabledError())
+        else:
+            return Failure(ValueError(f"An unexpected error occurred: {str(e)}"))
+
