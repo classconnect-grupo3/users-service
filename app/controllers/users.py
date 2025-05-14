@@ -1,7 +1,6 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pytest import Session
-from typing import List
 
 from app.common.result import Failure
 from app.database.db import get_db
