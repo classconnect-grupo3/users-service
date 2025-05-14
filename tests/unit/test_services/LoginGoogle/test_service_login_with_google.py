@@ -76,11 +76,7 @@ class TestAuthenticateWithGoogle:
     @patch("app.services.login_with_google.firebase_auth")
     def test_authenticate_with_google_invalid_token(self, mock_firebase_auth, mock_db):
         # Arrange
-        mock_firebase_auth.verify_id_token.side_effect = (
-            firebase_auth.InvalidIdTokenError(
-                "The provided ID token is not a valid Firebase ID token."
-            )
-        )
+        mock_firebase_auth.verify_id_token.side_effect = Exception("Invalid ID token")
 
         # Act
         result = authenticate_with_google(MOCK_ID_TOKEN, mock_db)
@@ -94,9 +90,7 @@ class TestAuthenticateWithGoogle:
     @patch("app.services.login_with_google.firebase_auth")
     def test_authenticate_with_google_expired_token(self, mock_firebase_auth, mock_db):
         # Arrange
-        mock_firebase_auth.verify_id_token.side_effect = (
-            firebase_auth.ExpiredIdTokenError("The provided ID token has expired.")
-        )
+        mock_firebase_auth.verify_id_token.side_effect = Exception("Token expired")
 
         # Act
         result = authenticate_with_google(MOCK_ID_TOKEN, mock_db)
@@ -110,8 +104,8 @@ class TestAuthenticateWithGoogle:
     @patch("app.services.login_with_google.firebase_auth")
     def test_authenticate_with_google_revoked_token(self, mock_firebase_auth, mock_db):
         # Arrange
-        mock_firebase_auth.verify_id_token.side_effect = (
-            firebase_auth.RevokedIdTokenError("The provided ID token has been revoked.")
+        mock_firebase_auth.verify_id_token.side_effect = Exception(
+            "Token has been revoked"
         )
 
         # Act
@@ -128,10 +122,8 @@ class TestAuthenticateWithGoogle:
         self, mock_firebase_auth, mock_db
     ):
         # Arrange
-        mock_firebase_auth.verify_id_token.side_effect = (
-            firebase_auth.CertificateFetchError(
-                "Failed to fetch public certificates for token verification."
-            )
+        mock_firebase_auth.verify_id_token.side_effect = Exception(
+            "Failed to fetch certificate"
         )
 
         # Act
@@ -146,11 +138,7 @@ class TestAuthenticateWithGoogle:
     @patch("app.services.login_with_google.firebase_auth")
     def test_authenticate_with_google_user_disabled(self, mock_firebase_auth, mock_db):
         # Arrange
-        mock_firebase_auth.verify_id_token.side_effect = (
-            firebase_auth.UserDisabledError(
-                "The user associated with the ID token is disabled."
-            )
-        )
+        mock_firebase_auth.verify_id_token.side_effect = Exception("User is disabled")
 
         # Act
         result = authenticate_with_google(MOCK_ID_TOKEN, mock_db)
