@@ -3,7 +3,12 @@ from pytest import Session
 from app.schemas.user import UserProfileData
 from app.models.user_model import User
 from sqlalchemy.sql import or_
+from app.common.constants import NEW_USER
+from app.common.result import Failure, Success
+from app.errors.database_errors import DatabaseError
+from sqlalchemy.orm import Session
 
+from app.models.user_model import User
 
 def store_location_db(db: Session, uid: str, latitude: float, longitude: float):
     user = db.query(User).filter(User.uid == uid).first()
@@ -56,3 +61,36 @@ def search_users_db(db: Session, query: str) -> list[User]:
 
 def get_users_by_ids_db(db: Session, user_ids: List[str]) -> list[User]:
     return db.query(User).filter(User.uid.in_(user_ids)).all()
+
+
+# Create a user in the database
+def store_user_in_db(
+    uid: str,
+    name,
+    email,
+    db: Session,
+    surname=None,
+    phone=None,
+    latitude=None,
+    longitude=None,
+    is_active=False,
+    is_blocked=False,
+):
+    try:
+        db_user = User(
+            uid=uid,
+            name=name,
+            surname=surname,
+            email=email,
+            phone=phone,
+            latitude=latitude,
+            longitude=longitude,
+            is_active=is_active,
+            is_blocked=is_blocked,
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return Success(NEW_USER)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
