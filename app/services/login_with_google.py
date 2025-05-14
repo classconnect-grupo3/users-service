@@ -34,7 +34,7 @@ def authenticate_with_google(
 
         user = get_user_by_email_db(db, email)
         if user:
-            return Success(OLD_USER)  # Ya estaba registrado
+            return Success(OLD_USER)  # Was already registered
 
         result = store_user_in_db(
             db=db,
@@ -47,7 +47,7 @@ def authenticate_with_google(
         if isinstance(result, Failure):
             return Failure(result)
 
-        return Success(NEW_USER)  # Nuevo usuario registrado
+        return Success(NEW_USER)  # New user created
 
     except firebase_auth.InvalidIdTokenError:
         return Failure(InvalidIdTokenError())
