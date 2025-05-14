@@ -91,6 +91,6 @@ def store_user_in_db(
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        return Success(NEW_USER)
+        return Success(db_user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
