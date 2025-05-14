@@ -9,6 +9,7 @@ from app.common.result import Failure, Success
 from app.schemas.user import UserBase
 from app.services.register import create_new_user
 from app.repositories.users import get_user_by_email_db
+from app.errors.register_errors import CouldNotCreateFirebaseUser
 
 
 class TestRegisterService:
@@ -68,7 +69,7 @@ class TestRegisterService:
     ):
         # Setup mock Firebase user creation to fail
         mock_create_firebase_user.return_value = Failure(
-            "Failed to create Firebase user"
+            CouldNotCreateFirebaseUser(message="Failed to create Firebase user")
         )
 
         # Call the function with the real session
@@ -76,7 +77,9 @@ class TestRegisterService:
 
         # Assert results
         assert isinstance(result, Failure)
-        assert result.error == "Failed to create Firebase user"
+        error = result.error
+        assert isinstance(error, CouldNotCreateFirebaseUser)
+        assert error.message == "Failed to create Firebase user"
 
         # Verify database operations were not performed
         assert db_session.query(User).filter_by(email=user.email).first() is None
