@@ -41,3 +41,14 @@ def verify_email_and_password(auth_request: AuthRequest):
 def get_user_location(db: Session, email: str):
     user = get_user_by_email_db(db, email)
     return {"latitude": user.latitude, "longitude": user.longitude}
+
+def get_user_by_email(db: Session, email: str):
+    user = get_user_by_email_db(db, email)
+    return {
+        "uid": user.uid,
+        "name": user.name,
+        "surname": user.surname,
+        "is_admin": user.is_admin,
+        "latitude": user.latitude, 
+        "longitude": user.longitude
+    }
