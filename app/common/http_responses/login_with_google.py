@@ -1,10 +1,10 @@
-from app.schemas.result_auth import AuthResult
+from app.schemas.google_auth_result import GoogleAuthResult
 from app.schemas.error_response import ErrorResponse
 
 login_responses = {
     200: {
         "description": "User authenticated successfully",
-        "model": AuthResult,
+        "model": GoogleAuthResult,
     },
     401: {
         "description": "Unauthorized: Invalid or expired token",
