@@ -16,3 +16,5 @@ class User(Base):
     longitude = Column(Float, default=None, nullable=True)
     is_active = Column(Boolean, default=False, nullable=False)
     is_blocked = Column(Boolean, default=False, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
+
