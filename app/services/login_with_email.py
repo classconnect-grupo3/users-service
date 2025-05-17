@@ -42,7 +42,7 @@ def get_user_location(db: Session, email: str):
     user = get_user_by_email_db(db, email)
     return {"latitude": user.latitude, "longitude": user.longitude}
 
-def get_user_by_email(db: Session, email: str):
+def get_user_info_by_email(db: Session, email: str):
     user = get_user_by_email_db(db, email)
     return {
         "uid": user.uid,
