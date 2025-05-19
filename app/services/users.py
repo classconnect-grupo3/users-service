@@ -165,9 +165,9 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
 
     result = update_user_profile_db(db, user, update_data)
     if isinstance(result, Failure):
-        return Failure(result)
+        return result
 
-    return Success(result)
+    return result
 
 def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     user = get_user_by_email_db(db, email)
@@ -181,6 +181,6 @@ def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
 
     result = update_user_profile_db(db, user, update_data)
     if isinstance(result, Failure):
-        return Failure(result)
+        return result
 
-    return Success(result)
+    return result
