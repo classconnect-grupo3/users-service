@@ -2,7 +2,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from app.schemas.email import Email
 from pytest import Session
-from app.common.http_responses.make_admin import make_admin_response, block_user_response
+from app.common.http_responses.make_admin import make_admin_response
+from app.common.http_responses.block_user import block_user_response
 
 
 from app.common.result import Failure
