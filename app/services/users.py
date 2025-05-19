@@ -5,7 +5,7 @@ from firebase_admin import (
     exceptions as firebase_exceptions,
 )
 from pydantic import EmailStr
-from app.errors.generic_errors import UserIsAlreadyAnAdmin
+from app.errors.generic_errors import UserIsAlreadyAnAdmin, UserIsAlreadyBlocked
 from pytest import Session
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import (
@@ -162,6 +162,22 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
         return Failure(UserIsAlreadyAnAdmin())
 
     update_data = UserProfileUpdate(is_admin=True)
+
+    result = update_user_profile_db(db, user, update_data)
+    if isinstance(result, Failure):
+        return Failure(result)
+
+    return Success(result)
+
+def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
+    user = get_user_by_email_db(db, email)
+    if not user:
+        return Failure(UserNotFoundError())
+    
+    if user.is_blocked:
+        return Failure(UserIsAlreadyBlocked())
+
+    update_data = UserProfileUpdate(is_blocked=True)
 
     result = update_user_profile_db(db, user, update_data)
     if isinstance(result, Failure):
