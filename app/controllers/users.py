@@ -16,7 +16,7 @@ from app.services.users import (
     get_user_by_id_service,
     get_users_batch_service
 )
-from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse, UsersBatchRequest
+from app.schemas.user import UserProfileResponse, UserProfileData, UserProfileUpdate, UsersSearchResponse, UsersBatchRequest
 
 router = APIRouter()
 
@@ -109,8 +109,8 @@ def get_current_user_profile(
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
-def update_current_user_profile(
-    update_data: UserProfileData,
+def update_user_profile(
+    update_data: UserProfileUpdate,
     request: Request,
     db: Session = Depends(get_db),
 ):
