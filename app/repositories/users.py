@@ -1,5 +1,6 @@
 from typing import Optional, List
-from app.errors.generic_errors import UidOrEmailNotProvided
+from app.errors.generic_errors import EmptySearchTermsError, UidOrEmailNotProvided
+from app.errors.user_errors import NoUsersFoundError
 from pytest import Session
 from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.models.user_model import User
@@ -45,7 +46,7 @@ def search_users_db(db: Session, query: str) -> Success | Failure:
         terms = [term.strip() for term in query.split() if term.strip()]
 
         if not terms:
-            return Failure(DatabaseError("No search terms provided"))
+            return Failure(EmptySearchTermsError())
 
         filters = []
         for term in terms:
@@ -58,7 +59,7 @@ def search_users_db(db: Session, query: str) -> Success | Failure:
         users = db.query(User).filter(final_filter).distinct().all()
 
         if not users:
-            return Failure(DatabaseError("No users found matching your search"))
+            return Failure(NoUsersFoundError())
 
         return Success(users)
     except Exception as e:
