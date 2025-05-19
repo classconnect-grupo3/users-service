@@ -50,6 +50,8 @@ class UsersBatchRequest(BaseModel):
     user_ids: List[str]
 
 
+# This class is used to update user profile information.
+# It is not used for other purposes.
 class UserProfileUpdate(BaseModel):
     name: Optional[str] = None
     surname: Optional[str] = None
