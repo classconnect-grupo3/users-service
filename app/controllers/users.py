@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from app.schemas.email import Email
 from pytest import Session
-from app.common.http_responses.make_admin import make_admin_response
+from app.common.http_responses.make_admin import make_admin_response, block_user_response
 
 
 from app.common.result import Failure
@@ -11,6 +11,7 @@ from app.models.user_model import User
 from app.schemas.error_response import ErrorResponse
 from app.schemas.location import Location
 from app.services.users import (
+    block_user_by,
     extract_token_from_request,
     make_admin_by,
     store_location,
@@ -243,4 +244,21 @@ def make_admin(request: Email, db: Session = Depends(get_db)):
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
-    return {"data": result.value}
+    
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data) 
+
+@router.post("/block", status_code=201, responses=block_user_response)
+def block_user(request: Email, db: Session = Depends(get_db)):
+
+    result = block_user_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data)   
