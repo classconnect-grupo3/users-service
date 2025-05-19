@@ -9,7 +9,7 @@ class User(Base):
 
     uid = Column(String, primary_key=True)
     name = Column(String, nullable=False)
-    surname = Column(String, default=None, nullable=True)
+    surname = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     phone = Column(String, default=None, nullable=True)
     latitude = Column(Float, default=None, nullable=True)
