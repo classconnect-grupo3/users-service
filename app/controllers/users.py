@@ -151,7 +151,7 @@ def update_user_profile(
     },
 )
 def search_users(
-    q: str,  
+    users_to_search: str,
     request: Request,
     db: Session = Depends(get_db),
 ):
@@ -160,7 +160,7 @@ def search_users(
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    result = search_users_service(db, q)
+    result = search_users_service(db, users_to_search)
     
     if isinstance(result, Failure):
         error = result.error

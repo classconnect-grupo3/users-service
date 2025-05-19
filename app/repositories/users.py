@@ -40,27 +40,29 @@ def get_user_by_email_db(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
 
-def search_users_db(db: Session, query: str) -> list[User]:
-    terms = [term.strip() for term in query.split() if term.strip()]
+def search_users_db(db: Session, query: str) -> Success | Failure:
+    try:
+        terms = [term.strip() for term in query.split() if term.strip()]
 
-    if not terms:
-        return []
+        if not terms:
+            return Failure(DatabaseError("No search terms provided"))
 
-    filters = []
-    for term in terms:
-        like_term = f"%{term}%"
-        filters.append(User.name.ilike(like_term))
-        filters.append(User.surname.ilike(like_term))
+        filters = []
+        for term in terms:
+            like_term = f"%{term}%"
+            filters.append(User.name.ilike(like_term))
+            filters.append(User.surname.ilike(like_term))
 
-    final_filter = or_(*filters)
+        final_filter = or_(*filters)
 
-    query_sql = (
-        db.query(User.uid, User.name, User.surname).filter(final_filter).distinct()
-    )
+        users = db.query(User).filter(final_filter).distinct().all()
 
-    results = query_sql.all()
+        if not users:
+            return Failure(DatabaseError("No users found matching your search"))
 
-    return results
+        return Success(users)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
 
 
 def get_users_by_ids_db(db: Session, user_ids: List[str]) -> list[User]:
@@ -98,5 +100,3 @@ def store_user_in_db(
         return Success(db_user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
-
-

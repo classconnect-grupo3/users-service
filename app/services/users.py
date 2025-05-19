@@ -112,13 +112,13 @@ def update_user_profile(
 
     return Success(updated_user)
 
-def search_users_service(db: Session, query: str) -> Success | Failure:
-    users = search_users_db(db, query)
+def search_users_service(db: Session, users_to_search: str) -> Success | Failure:
+    result = search_users_db(db, users_to_search)
     
-    if not users:
-        return Failure(NoUsersFoundError())
+    if isinstance(result, Failure):
+        return result
     
-    return Success(users)
+    return result
 
 
 def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
