@@ -22,7 +22,7 @@ from app.repositories.users import (
     search_users_db,
     get_users_by_ids_db
 )
-from app.schemas.user import UserProfileData
+from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
     UserNotFoundError,
     UpdateProfileError,
@@ -86,7 +86,7 @@ def get_user_profile(db: Session, token: str) -> Success | Failure:
 
 
 def update_user_profile(
-    db: Session, update_data: UserProfileData, token: str
+    db: Session, update_data: UserProfileUpdate, token: str
 ) -> Success | Failure:
     result = get_uid_from_token(token)
     if isinstance(result, Failure):
