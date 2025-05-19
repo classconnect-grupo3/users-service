@@ -24,10 +24,10 @@ class UserRegisterResponse(BaseModel):
 
 
 class UserProfileData(BaseModel):
-    uid: str 
-    name: str 
-    surname: str 
-    email: EmailStr 
+    uid: str
+    name: str
+    surname: str
+    email: EmailStr
     phone: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
@@ -41,8 +41,24 @@ class UserProfileData(BaseModel):
 class UserProfileResponse(BaseModel):
     data: UserProfileData
 
+
 class UsersSearchResponse(BaseModel):
     data: list[UserProfileData]
 
+
 class UsersBatchRequest(BaseModel):
     user_ids: List[str]
+
+
+class UserProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    surname: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    is_active: Optional[bool] = None
+    is_blocked: Optional[bool] = None
+    is_admin: Optional[bool] = None
+
+    model_config = {"from_attributes": True}
