@@ -1,6 +1,9 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
+from app.schemas.email import Email
 from pytest import Session
+from app.common.http_responses.make_admin import make_admin_response
+
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -9,6 +12,7 @@ from app.schemas.error_response import ErrorResponse
 from app.schemas.location import Location
 from app.services.users import (
     extract_token_from_request,
+    make_admin_by,
     store_location,
     get_user_profile,
     update_user_profile,
@@ -229,3 +233,14 @@ def get_users_batch(
     user_profiles = [UserProfileData.from_orm(user) for user in users]
 
     return UsersSearchResponse(data=user_profiles)
+
+
+
+@router.post("/admin", status_code=201, responses=make_admin_response)
+def make_admin(request: Email, db: Session = Depends(get_db)):
+
+    result = make_admin_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    return {"data": result.value}
