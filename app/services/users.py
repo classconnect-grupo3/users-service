@@ -134,3 +134,18 @@ def get_users_batch_service(db: Session, user_ids: List[str]) -> Success | Failu
         return Failure(NoUsersFoundError())
 
     return Success(users)
+
+def get_user_info_by_email(db: Session, email: str):
+    user = get_user_by_email_db(db, email)
+    return {
+        "uid": user.uid,
+        "name": user.name,
+        "surname": user.surname,
+        "is_admin": user.is_admin,
+        "latitude": user.latitude, 
+        "longitude": user.longitude
+    }
+
+def get_user_location(db: Session, email: str):
+    user = get_user_by_email_db(db, email)
+    return {"latitude": user.latitude, "longitude": user.longitude}

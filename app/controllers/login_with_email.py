@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
+from app.services.users import get_user_info_by_email
 from pytest import Session
 
 from app.common.result import Failure
 from app.database.db import get_db
 from app.schemas.request_auth import AuthRequest
 from app.schemas.result_auth import AuthResult
-from app.services.login_with_email import get_user_info_by_email, verify_email_and_password
+from app.services.login_with_email import  verify_email_and_password
 from app.common.http_responses.login_with_email import login_responses
 
 router = APIRouter()
