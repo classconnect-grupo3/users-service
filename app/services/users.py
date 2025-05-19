@@ -22,7 +22,7 @@ from app.repositories.users import (
     update_user_profile_db,
     get_user_by_email_db,
     search_users_db,
-    get_users_by_ids_db
+    get_users_by_ids_db,
 )
 from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
@@ -112,13 +112,9 @@ def update_user_profile(
 
     return Success(updated_user)
 
+
 def search_users_service(db: Session, query: str) -> Success | Failure:
-    result = search_users_db(db, query)
-    
-    if isinstance(result, Failure):
-        return result
-    
-    return result
+    return search_users_db(db, query)
 
 
 def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
@@ -127,7 +123,8 @@ def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
     if not user:
         return Failure(UserNotFoundError())
 
-    return Success(user)    
+    return Success(user)
+
 
 def get_users_batch_service(db: Session, user_ids: List[str]) -> Success | Failure:
     users = get_users_by_ids_db(db, user_ids)
@@ -137,6 +134,7 @@ def get_users_batch_service(db: Session, user_ids: List[str]) -> Success | Failu
 
     return Success(users)
 
+
 def get_user_info_by_email(db: Session, email: str):
     user = get_user_by_email_db(db, email)
     return {
@@ -144,9 +142,10 @@ def get_user_info_by_email(db: Session, email: str):
         "name": user.name,
         "surname": user.surname,
         "is_admin": user.is_admin,
-        "latitude": user.latitude, 
-        "longitude": user.longitude
+        "latitude": user.latitude,
+        "longitude": user.longitude,
     }
+
 
 def get_user_location(db: Session, email: str):
     user = get_user_by_email_db(db, email)
@@ -169,11 +168,12 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
 
     return result
 
+
 def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     user = get_user_by_email_db(db, email)
     if not user:
         return Failure(UserNotFoundError())
-    
+
     if user.is_blocked:
         return Failure(UserIsAlreadyBlocked())
 
