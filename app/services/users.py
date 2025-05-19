@@ -112,8 +112,8 @@ def update_user_profile(
 
     return Success(updated_user)
 
-def search_users_service(db: Session, users_to_search: str) -> Success | Failure:
-    result = search_users_db(db, users_to_search)
+def search_users_service(db: Session, query: str) -> Success | Failure:
+    result = search_users_db(db, query)
     
     if isinstance(result, Failure):
         return result

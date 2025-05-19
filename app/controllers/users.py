@@ -1,6 +1,7 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
 from app.schemas.email import Email
+from app.schemas.query import Query
 from pytest import Session
 from app.common.http_responses.make_admin import make_admin_response
 from app.common.http_responses.block_user import block_user_response
@@ -151,7 +152,7 @@ def update_user_profile(
     },
 )
 def search_users(
-    users_to_search: str,
+    query: Query,
     request: Request,
     db: Session = Depends(get_db),
 ):
@@ -160,7 +161,7 @@ def search_users(
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    result = search_users_service(db, users_to_search)
+    result = search_users_service(db, query.query)
     
     if isinstance(result, Failure):
         error = result.error
