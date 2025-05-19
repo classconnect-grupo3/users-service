@@ -20,3 +20,7 @@ class CouldNotUpdateUser(GenericError):
 class UserNotProvided(GenericError):
     def __init__(self, message: str = "User not provided"):
         super().__init__(message, http_status_code=400)
+
+class UserIsAlreadyBlocked(GenericError):
+    def __init__(self, message: str = "User is already blocked"):
+        super().__init__(message, http_status_code=400)
