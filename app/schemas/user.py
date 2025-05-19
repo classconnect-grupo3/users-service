@@ -24,12 +24,16 @@ class UserRegisterResponse(BaseModel):
 
 
 class UserProfileData(BaseModel):
-    uid: Optional[str] = None
-    name: Optional[str] = None
-    surname: Optional[str] = None
-    email: Optional[str] = None
+    uid: str 
+    name: str 
+    surname: str 
+    email: EmailStr 
+    phone: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    is_active: bool = False
+    is_blocked: bool = False
+    is_admin: bool = False
 
     model_config = {"from_attributes": True}
 
