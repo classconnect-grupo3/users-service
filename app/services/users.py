@@ -14,7 +14,6 @@ load_dotenv()
 
 from pydantic import EmailStr
 from app.errors.generic_errors import (
-    EmailSendingError,
     UserIsAlreadyAnAdmin,
     UserIsAlreadyBlocked,
 )
