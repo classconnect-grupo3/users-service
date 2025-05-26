@@ -16,14 +16,22 @@ from app.services.users import (
     block_user_by,
     extract_token_from_request,
     make_admin_by,
+    send_password_reset_link,
     store_location,
     get_user_profile,
     update_user_profile,
     search_users_service,
     get_user_by_id_service,
-    get_users_batch_service
+    get_users_batch_service,
 )
-from app.schemas.user import UserProfileResponse, UserProfileData, UserProfileUpdate, UsersSearchResponse, UsersBatchRequest
+from app.schemas.user import (
+    UserProfileResponse,
+    UserProfileData,
+    UserProfileUpdate,
+    UsersSearchResponse,
+    UsersBatchRequest,
+)
+from app.common.http_responses.forgot_password import forgot_password_responses
 
 router = APIRouter()
 
@@ -147,7 +155,10 @@ def update_user_profile(
     responses={
         400: {"model": ErrorResponse, "description": "Bad request"},
         401: {"model": ErrorResponse, "description": "Unauthorized"},
-        404: {"model": ErrorResponse, "description": "No users found matching your search"},
+        404: {
+            "model": ErrorResponse,
+            "description": "No users found matching your search",
+        },
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
@@ -162,11 +173,11 @@ def search_users(
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
     result = search_users_service(db, query)
-    
+
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
-    
+
     users = result.value
 
     user_profiles = [UserProfileData.from_orm(user) for user in users]
@@ -203,7 +214,8 @@ def get_user_by_id(
     user: User = result.value
     profile_data = UserProfileData.from_orm(user)
 
-    return UserProfileResponse(data=profile_data)    
+    return UserProfileResponse(data=profile_data)
+
 
 @router.post(
     "/batch",
@@ -211,7 +223,10 @@ def get_user_by_id(
     responses={
         400: {"model": ErrorResponse, "description": "Bad request"},
         401: {"model": ErrorResponse, "description": "Unauthorized"},
-        404: {"model": ErrorResponse, "description": "No users found for the provided IDs"},
+        404: {
+            "model": ErrorResponse,
+            "description": "No users found for the provided IDs",
+        },
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
@@ -238,7 +253,6 @@ def get_users_batch(
     return UsersSearchResponse(data=user_profiles)
 
 
-
 @router.post("/admin", status_code=201, responses=make_admin_response)
 def make_admin(request: Email, db: Session = Depends(get_db)):
 
@@ -246,11 +260,12 @@ def make_admin(request: Email, db: Session = Depends(get_db)):
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
-    
+
     user: User = result.value
     profile_data = UserProfileData.model_validate(user)
 
-    return UserProfileResponse(data=profile_data) 
+    return UserProfileResponse(data=profile_data)
+
 
 @router.post("/block", status_code=201, responses=block_user_response)
 def block_user(request: Email, db: Session = Depends(get_db)):
@@ -259,8 +274,21 @@ def block_user(request: Email, db: Session = Depends(get_db)):
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
-    
+
     user: User = result.value
     profile_data = UserProfileData.model_validate(user)
 
-    return UserProfileResponse(data=profile_data)   
+    return UserProfileResponse(data=profile_data)
+
+
+@router.post(
+    "/forgot-password",
+    status_code=202,
+    responses=forgot_password_responses,
+)
+async def forgot_password(request: Email):
+    result = await send_password_reset_link(request.email)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    return {"message": result.value}
