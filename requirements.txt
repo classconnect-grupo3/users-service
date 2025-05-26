@@ -23,3 +23,4 @@ black
 asyncpg
 pytest-asyncio
 newrelic
+aiosmtplib
