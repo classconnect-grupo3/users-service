@@ -1,8 +1,11 @@
 from fastapi import Request
+from typing import List
 from firebase_admin import (
     auth,
     exceptions as firebase_exceptions,
 )
+from pydantic import EmailStr
+from app.errors.generic_errors import UserIsAlreadyAnAdmin, UserIsAlreadyBlocked
 from pytest import Session
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import (
@@ -19,8 +22,9 @@ from app.repositories.users import (
     update_user_profile_db,
     get_user_by_email_db,
     search_users_db,
+    get_users_by_ids_db,
 )
-from app.schemas.user import UserProfileData
+from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
     UserNotFoundError,
     UpdateProfileError,
@@ -84,7 +88,7 @@ def get_user_profile(db: Session, token: str) -> Success | Failure:
 
 
 def update_user_profile(
-    db: Session, update_data: UserProfileData, token: str
+    db: Session, update_data: UserProfileUpdate, token: str
 ) -> Success | Failure:
     result = get_uid_from_token(token)
     if isinstance(result, Failure):
@@ -108,13 +112,9 @@ def update_user_profile(
 
     return Success(updated_user)
 
+
 def search_users_service(db: Session, query: str) -> Success | Failure:
-    users = search_users_db(db, query)
-    
-    if not users:
-        return Failure(NoUsersFoundError())
-    
-    return Success(users)
+    return search_users_db(db, query)
 
 
 def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
@@ -123,4 +123,57 @@ def get_user_by_id_service(db: Session, user_id: str) -> Success | Failure:
     if not user:
         return Failure(UserNotFoundError())
 
-    return Success(user)    
+    return Success(user)
+
+
+def get_users_batch_service(db: Session, user_ids: List[str]) -> Success | Failure:
+    users = get_users_by_ids_db(db, user_ids)
+
+    if not users:
+        return Failure(NoUsersFoundError())
+
+    return Success(users)
+
+
+def get_user_info_by_email(db: Session, email: str):
+    user = get_user_by_email_db(db, email)
+    return {
+        "uid": user.uid,
+        "name": user.name,
+        "surname": user.surname,
+        "is_admin": user.is_admin,
+        "latitude": user.latitude,
+        "longitude": user.longitude,
+    }
+
+
+def get_user_location(db: Session, email: str):
+    user = get_user_by_email_db(db, email)
+    return {"latitude": user.latitude, "longitude": user.longitude}
+
+
+def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
+    user = get_user_by_email_db(db, email)
+    if not user:
+        return Failure(UserNotFoundError())
+
+    if user.is_admin:
+        return Failure(UserIsAlreadyAnAdmin())
+
+    update_data = UserProfileUpdate(is_admin=True)
+
+    return update_user_profile_db(db, user, update_data)
+   
+
+
+def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
+    user = get_user_by_email_db(db, email)
+    if not user:
+        return Failure(UserNotFoundError())
+
+    if user.is_blocked:
+        return Failure(UserIsAlreadyBlocked())
+
+    update_data = UserProfileUpdate(is_blocked=True)
+
+    return update_user_profile_db(db, user, update_data)

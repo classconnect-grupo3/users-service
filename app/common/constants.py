@@ -1,0 +1,4 @@
+OK = 1
+ERROR = 0
+OLD_USER = 1
+NEW_USER = 0

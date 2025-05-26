@@ -4,7 +4,7 @@ import pytest
 
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import InvalidCredentialsError
-from app.schemas.auth_request import AuthRequest
+from app.schemas.request_auth import AuthRequest
 from app.services.login_with_email import verify_email_and_password
 
 

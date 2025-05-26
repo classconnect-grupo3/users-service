@@ -11,11 +11,16 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pytest pytest-cov pytest-asyncio
 
+# Install the New Relic agent
+RUN pip install newrelic
+
 # Copy the rest of the application code into the container
 COPY . .
+
+COPY newrelic.ini  .
 
 # Expose the port that the app runs on
 EXPOSE ${PORT}
 
 # Command to run the application
-CMD uvicorn app.main:app --host ${HOST} --port ${PORT} --reload
+CMD newrelic-admin run-program uvicorn app.main:app --host ${HOST} --port ${PORT} --reload

@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
+from app.services.users import get_user_info_by_email
 from pytest import Session
 
 from app.common.result import Failure
 from app.database.db import get_db
-from app.schemas.auth_request import AuthRequest
-from app.schemas.auth_result import AuthResult
-from app.services.login_with_email import get_user_location, verify_email_and_password
+from app.schemas.request_auth import AuthRequest
+from app.schemas.result_auth import AuthResult
+from app.services.login_with_email import  verify_email_and_password
 from app.common.http_responses.login_with_email import login_responses
 
 router = APIRouter()
@@ -24,9 +25,10 @@ def login_user(auth_request: AuthRequest, db: Session = Depends(get_db)):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    user_location = get_user_location(db, auth_request.email)
+    user_info = get_user_info_by_email(db, auth_request.email)
 
     return AuthResult(
         id_token=result.value,
-        user_location=user_location,
+        user_info=user_info,
     )
+

@@ -1,7 +1,11 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
+from app.schemas.email import Email
+from app.schemas.query import Query
 from pytest import Session
-from typing import List
+from app.common.http_responses.make_admin import make_admin_response
+from app.common.http_responses.block_user import block_user_response
+
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -9,14 +13,17 @@ from app.models.user_model import User
 from app.schemas.error_response import ErrorResponse
 from app.schemas.location import Location
 from app.services.users import (
+    block_user_by,
     extract_token_from_request,
+    make_admin_by,
     store_location,
     get_user_profile,
     update_user_profile,
     search_users_service,
-    get_user_by_id_service
+    get_user_by_id_service,
+    get_users_batch_service
 )
-from app.schemas.user import UserProfileResponse, UserProfileData, UsersSearchResponse
+from app.schemas.user import UserProfileResponse, UserProfileData, UserProfileUpdate, UsersSearchResponse, UsersBatchRequest
 
 router = APIRouter()
 
@@ -109,8 +116,8 @@ def get_current_user_profile(
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
-def update_current_user_profile(
-    update_data: UserProfileData,
+def update_user_profile(
+    update_data: UserProfileUpdate,
     request: Request,
     db: Session = Depends(get_db),
 ):
@@ -145,7 +152,7 @@ def update_current_user_profile(
     },
 )
 def search_users(
-    q: str,  
+    query: str,
     request: Request,
     db: Session = Depends(get_db),
 ):
@@ -154,7 +161,7 @@ def search_users(
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    result = search_users_service(db, q)
+    result = search_users_service(db, query)
     
     if isinstance(result, Failure):
         error = result.error
@@ -197,3 +204,63 @@ def get_user_by_id(
     profile_data = UserProfileData.from_orm(user)
 
     return UserProfileResponse(data=profile_data)    
+
+@router.post(
+    "/batch",
+    response_model=UsersSearchResponse,
+    responses={
+        400: {"model": ErrorResponse, "description": "Bad request"},
+        401: {"model": ErrorResponse, "description": "Unauthorized"},
+        404: {"model": ErrorResponse, "description": "No users found for the provided IDs"},
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def get_users_batch(
+    request_data: UsersBatchRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    result = extract_token_from_request(request)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    result = get_users_batch_service(db, request_data.user_ids)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    users = result.value
+
+    user_profiles = [UserProfileData.from_orm(user) for user in users]
+
+    return UsersSearchResponse(data=user_profiles)
+
+
+
+@router.post("/admin", status_code=201, responses=make_admin_response)
+def make_admin(request: Email, db: Session = Depends(get_db)):
+
+    result = make_admin_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data) 
+
+@router.post("/block", status_code=201, responses=block_user_response)
+def block_user(request: Email, db: Session = Depends(get_db)):
+
+    result = block_user_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data)   

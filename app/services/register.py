@@ -9,9 +9,8 @@ from sqlalchemy.orm import Session
 from app.common.result import Failure, Result, Success
 from app.errors.register_errors import CouldNotCreateFirebaseUser, UserAlreadyExists
 from app.models.user_model import User
-from app.repositories.register import db_create_user
 from app.schemas.user import UserBase
-from app.repositories.users import get_user_by_email_db
+from app.repositories.users import get_user_by_email_db, store_user_in_db
 
 # Use env variable to determine if we're in test mode
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
@@ -37,15 +36,24 @@ async def create_new_user(db: Session, user: UserBase) -> Result[User]:
     if existing_user:
         return Failure(UserAlreadyExists())
 
-    firebase_result = await anyio.to_thread.run_sync(
+    result = await anyio.to_thread.run_sync(
         create_firebase_user, user.email, user.password
     )
 
-    if isinstance(firebase_result, Failure):
-        return firebase_result
+    if isinstance(result, Failure):
+        return result
 
-    firebase_user = firebase_result.value
+    firebase_user = result.value
 
-    new_user = db_create_user(db=db, user=user, uid=firebase_user.uid)
+    result = store_user_in_db(
+        uid=firebase_user.uid,
+        name=user.name,
+        email=user.email,
+        db=db,
+        surname=user.surname,
+    )
 
-    return Success(new_user)
+    if isinstance(result, Failure):
+        return result
+
+    return result
