@@ -4,8 +4,19 @@ from firebase_admin import (
     auth,
     exceptions as firebase_exceptions,
 )
+
+from dotenv import load_dotenv
+import os
+from email.message import EmailMessage
+import aiosmtplib
+
+load_dotenv()
+
 from pydantic import EmailStr
-from app.errors.generic_errors import UserIsAlreadyAnAdmin, UserIsAlreadyBlocked
+from app.errors.generic_errors import (
+    UserIsAlreadyAnAdmin,
+    UserIsAlreadyBlocked,
+)
 from pytest import Session
 from app.common.result import Failure, Success
 from app.errors.authentication_errors import (
@@ -31,6 +42,10 @@ from app.errors.user_errors import (
     EmailAlreadyInUseError,
     NoUsersFoundError,
 )
+
+
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 
 
 def store_location(db: Session, latitude: float, longitude: float, token: str):
@@ -163,7 +178,6 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
     update_data = UserProfileUpdate(is_admin=True)
 
     return update_user_profile_db(db, user, update_data)
-   
 
 
 def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
@@ -177,3 +191,34 @@ def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     update_data = UserProfileUpdate(is_blocked=True)
 
     return update_user_profile_db(db, user, update_data)
+
+
+async def send_password_reset_link(email: str) -> Success | Failure:
+    try:
+        reset_link = auth.generate_password_reset_link(email)
+    except auth.UserNotFoundError:
+        return Failure(UserNotFoundError(email=email))
+    except Exception as e:
+        return Failure(EmailSendingError(reason=f"Failed to generate link: {e}"))
+
+    return await send_reset_email(email, reset_link)
+
+async def send_reset_email(to_email: str, reset_link: str) -> Success | Failure:
+    try:
+        message = EmailMessage()
+        message["From"] = EMAIL_ADDRESS
+        message["To"] = to_email
+        message["Subject"] = "Reset your password"
+        message.set_content(f"Click here to reset your password: {reset_link}")
+
+        await aiosmtplib.send(
+            message,
+            hostname="smtp.gmail.com",
+            port=587,
+            start_tls=True,
+            username=EMAIL_ADDRESS,
+            password=EMAIL_APP_PASSWORD,
+        )
+        return Success("Password reset email sent successfully.")
+    except Exception as e:
+        return Failure(EmailSendingError(reason=f"SMTP error: {e}"))
