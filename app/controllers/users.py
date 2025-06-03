@@ -200,10 +200,10 @@ def get_user_by_id(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    result = extract_token_from_request(request)
-    if isinstance(result, Failure):
-        error = result.error
-        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+    # result = extract_token_from_request(request)
+    # if isinstance(result, Failure):
+    #     error = result.error
+    #     raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
     result = get_user_by_id_service(db, user_id)
 
