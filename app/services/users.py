@@ -102,7 +102,7 @@ def get_user_profile(db: Session, token: str) -> Success | Failure:
     return Success(user)
 
 
-def update_user_profile(
+def update_user_profile_service(
     db: Session, update_data: UserProfileUpdate, token: str
 ) -> Success | Failure:
     result = get_uid_from_token(token)

@@ -19,7 +19,7 @@ from app.services.users import (
     send_password_reset_link,
     store_location,
     get_user_profile,
-    update_user_profile,
+    update_user_profile_service,
     search_users_service,
     get_user_by_id_service,
     get_users_batch_service,
@@ -137,7 +137,7 @@ def update_user_profile(
 
     token = result.value
 
-    result = update_user_profile(db, update_data, token)
+    result = update_user_profile_service(db, update_data, token)
 
     if isinstance(result, Failure):
         error = result.error
