@@ -110,6 +110,9 @@ def update_user_profile(
         return result
 
     uid = result.value
+    user = get_user_by_uid_db(db, uid)
+    if not user:
+        return Failure(UserNotFoundError())
 
     if update_data.email:
         existing_user = get_user_by_email_db(db, update_data.email)
@@ -121,11 +124,7 @@ def update_user_profile(
     except firebase_exceptions.FirebaseError as e:
         return Failure(InvalidTokenError(message=f"Firebase error: {str(e)}"))
 
-    updated_user = update_user_profile_db(db, uid, update_data)
-    if not updated_user:
-        return Failure(UpdateProfileError())
-
-    return Success(updated_user)
+    return update_user_profile_db(db, user, update_data)
 
 
 def search_users_service(db: Session, query: str) -> Success | Failure:
@@ -202,6 +201,7 @@ async def send_password_reset_link(email: str) -> Success | Failure:
         return Failure(EmailSendingError(reason=f"Failed to generate link: {e}"))
 
     return await send_reset_email(email, reset_link)
+
 
 async def send_reset_email(to_email: str, reset_link: str) -> Success | Failure:
     try:
