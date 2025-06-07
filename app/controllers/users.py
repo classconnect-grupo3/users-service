@@ -125,8 +125,8 @@ def get_current_user_profile(
     },
 )
 def update_user_profile(
-    update_data: UserProfileUpdate,
     request: Request,
+    update_data: UserProfileUpdate,
     db: Session = Depends(get_db),
 ):
     result = extract_token_from_request(request)
