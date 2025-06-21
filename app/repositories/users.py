@@ -101,3 +101,13 @@ def store_user_in_db(
         return Success(db_user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
+
+
+def unlock_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = False
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
