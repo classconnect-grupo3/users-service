@@ -171,6 +171,14 @@ def get_user_location(db: Session, email: str):
     return {"latitude": user.latitude, "longitude": user.longitude}
 
 
+def is_user_active_by_email(email: EmailStr, db: Session) -> Success | Failure:
+    user = get_user_by_email_db(db, email)
+    if not user:
+        return Failure(UserNotFoundError())
+
+    return Success(user.is_active)
+
+
 def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
     user = get_user_by_email_db(db, email)
     if not user:
