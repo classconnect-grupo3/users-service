@@ -1,3 +1,4 @@
+from app.errors.forgot_password import EmailSendingError
 from fastapi import Request
 from typing import List
 from firebase_admin import (
@@ -16,6 +17,7 @@ from pydantic import EmailStr
 from app.errors.generic_errors import (
     UserIsAlreadyAnAdmin,
     UserIsAlreadyBlocked,
+    UserIsNotBlocked,
 )
 from pytest import Session
 from app.common.result import Failure, Success
@@ -34,6 +36,7 @@ from app.repositories.users import (
     get_user_by_email_db,
     search_users_db,
     get_users_by_ids_db,
+    unlock_user_db,
 )
 from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
@@ -190,6 +193,17 @@ def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     update_data = UserProfileUpdate(is_blocked=True)
 
     return update_user_profile_db(db, user, update_data)
+
+
+def unlock_user_by(email: EmailStr, db: Session) -> Success | Failure:
+    user = get_user_by_email_db(db, email)
+    if not user:
+        return Failure(UserNotFoundError())
+
+    if not user.is_blocked:
+        return Failure(UserIsNotBlocked())
+
+    return unlock_user_db(db, user)
 
 
 async def send_password_reset_link(email: str) -> Success | Failure:
