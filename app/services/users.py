@@ -38,6 +38,7 @@ from app.repositories.users import (
     get_users_by_ids_db,
     unlock_user_db,
     block_user_db,
+    make_admin_db,
 )
 from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
@@ -178,9 +179,7 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
     if user.is_admin:
         return Failure(UserIsAlreadyAnAdmin())
 
-    update_data = UserProfileUpdate(is_admin=True)
-
-    return update_user_profile_db(db, user, update_data)
+    return make_admin_db(db, user)
 
 
 def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
