@@ -313,12 +313,12 @@ async def forgot_password(request: Email):
 
 
 @router.get(
-    "/is-active",
+    "/{email}/is-active",
     status_code=200,
     response_model=UserIsActiveResponse,
     responses=is_active_response,
 )
-def is_user_active(email: EmailStr, db: Session = Depends(get_db)):
+def is_user_active(email: str, db: Session = Depends(get_db)):
     result = is_user_active_by_email(email, db)
     if isinstance(result, Failure):
         error = result.error
