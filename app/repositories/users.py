@@ -111,3 +111,13 @@ def unlock_user_db(db: Session, user: User):
         return Success(user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
+
+
+def block_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
