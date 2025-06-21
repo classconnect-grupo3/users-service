@@ -5,7 +5,7 @@ from app.schemas.query import Query
 from pytest import Session
 from app.common.http_responses.make_admin import make_admin_response
 from app.common.http_responses.block_user import block_user_response
-
+from app.common.http_responses.unlock_user import unlock_user_response
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -23,6 +23,7 @@ from app.services.users import (
     search_users_service,
     get_user_by_id_service,
     get_users_batch_service,
+    unlock_user_by,
 )
 from app.schemas.user import (
     UserProfileResponse,
@@ -271,6 +272,19 @@ def make_admin(request: Email, db: Session = Depends(get_db)):
 def block_user(request: Email, db: Session = Depends(get_db)):
 
     result = block_user_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data)
+
+
+@router.post("/unlock", status_code=201, responses=unlock_user_response)
+def unlock_user(request: Email, db: Session = Depends(get_db)):
+    result = unlock_user_by(request.email, db)
     if isinstance(result, Failure):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
