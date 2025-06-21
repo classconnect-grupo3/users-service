@@ -61,3 +61,7 @@ class UserProfileUpdate(BaseModel):
     longitude: Optional[float] = None
 
     model_config = {"from_attributes": True}
+
+
+class UserIsActiveResponse(BaseModel):
+    is_active: bool
