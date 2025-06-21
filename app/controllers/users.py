@@ -1,11 +1,13 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
 from app.schemas.email import Email
+from pydantic import EmailStr
 from app.schemas.query import Query
 from pytest import Session
 from app.common.http_responses.make_admin import make_admin_response
 from app.common.http_responses.block_user import block_user_response
 from app.common.http_responses.unlock_user import unlock_user_response
+from app.common.http_responses.is_active import is_active_response
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -24,6 +26,7 @@ from app.services.users import (
     get_user_by_id_service,
     get_users_batch_service,
     unlock_user_by,
+    is_user_active_by_email,
 )
 from app.schemas.user import (
     UserProfileResponse,
@@ -31,6 +34,7 @@ from app.schemas.user import (
     UserProfileUpdate,
     UsersSearchResponse,
     UsersBatchRequest,
+    UserIsActiveResponse,
 )
 from app.common.http_responses.forgot_password import forgot_password_responses
 
@@ -306,3 +310,20 @@ async def forgot_password(request: Email):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
     return {"message": result.value}
+
+
+@router.get(
+    "/is-active",
+    status_code=200,
+    response_model=UserIsActiveResponse,
+    responses=is_active_response,
+)
+def is_user_active(email: EmailStr, db: Session = Depends(get_db)):
+    result = is_user_active_by_email(email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    is_active = result.value
+
+    return UserIsActiveResponse(is_active=is_active)
