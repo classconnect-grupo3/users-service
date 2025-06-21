@@ -59,6 +59,5 @@ class UserProfileUpdate(BaseModel):
     phone: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-    is_active: Optional[bool] = None
 
     model_config = {"from_attributes": True}
