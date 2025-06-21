@@ -121,3 +121,13 @@ def block_user_db(db: Session, user: User):
         return Success(user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
+
+
+def make_admin_db(db: Session, user: User):
+    try:
+        user.is_admin = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
