@@ -37,6 +37,7 @@ from app.repositories.users import (
     search_users_db,
     get_users_by_ids_db,
     unlock_user_db,
+    block_user_db,
 )
 from app.schemas.user import UserProfileData, UserProfileUpdate
 from app.errors.user_errors import (
@@ -190,9 +191,7 @@ def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     if user.is_blocked:
         return Failure(UserIsAlreadyBlocked())
 
-    update_data = UserProfileUpdate(is_blocked=True)
-
-    return update_user_profile_db(db, user, update_data)
+    return block_user_db(db, user)
 
 
 def unlock_user_by(email: EmailStr, db: Session) -> Success | Failure:
