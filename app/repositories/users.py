@@ -10,9 +10,6 @@ from app.common.result import Failure, Success
 from app.errors.database_errors import DatabaseError
 from sqlalchemy.orm import Session
 
-from app.models.user_model import User
-
-
 def store_location_db(db: Session, uid: str, latitude: float, longitude: float):
     user = db.query(User).filter(User.uid == uid).first()
     user.latitude = latitude
@@ -132,8 +129,8 @@ def get_user_stats_db(db: Session) -> Success | Failure:
             "users_with_location": users_with_location,
             "users_without_location": users_without_location
         })
-
-
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
 
 
 def block_user_db(db: Session, user: User):
@@ -154,6 +151,7 @@ def make_admin_db(db: Session, user: User):
         return Success(user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
+
 
 def unlock_user_db(db: Session, user: User):
     try:
