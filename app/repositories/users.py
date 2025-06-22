@@ -132,8 +132,6 @@ def get_user_stats_db(db: Session) -> Success | Failure:
             "users_with_location": users_with_location,
             "users_without_location": users_without_location
         })
-    except Exception as e:
-        return Failure(DatabaseError(str(e)))
 
 
 
@@ -163,3 +161,5 @@ def unlock_user_db(db: Session, user: User):
         db.commit()
         db.refresh(user)
         return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
