@@ -64,3 +64,20 @@ class UserProfileUpdate(BaseModel):
     is_admin: Optional[bool] = None
 
     model_config = {"from_attributes": True}
+
+
+# Admin metrics schemas
+class UserStatsData(BaseModel):
+    total_users: int
+    active_users: int
+    inactive_users: int
+    blocked_users: int
+    admin_users: int
+    users_with_phone: int
+    users_without_phone: int
+    users_with_location: int
+    users_without_location: int
+
+
+class UserStatsResponse(BaseModel):
+    data: UserStatsData
