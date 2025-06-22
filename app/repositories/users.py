@@ -137,3 +137,29 @@ def get_user_stats_db(db: Session) -> Success | Failure:
 
 
 
+
+def block_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+
+def make_admin_db(db: Session, user: User):
+    try:
+        user.is_admin = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+def unlock_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = False
+        db.commit()
+        db.refresh(user)
+        return Success(user)
