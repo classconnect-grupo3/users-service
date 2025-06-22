@@ -356,6 +356,9 @@ def get_user_stats(
 )
 def is_user_active(email: str, db: Session = Depends(get_db)):
     result = is_user_active_by_email(email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
     is_active = result.value
 
