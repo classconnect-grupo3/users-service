@@ -101,3 +101,39 @@ def store_user_in_db(
         return Success(db_user)
     except Exception as e:
         return Failure(DatabaseError(str(e)))
+
+
+# Admin metrics functions
+def get_user_stats_db(db: Session) -> Success | Failure:
+    try:
+        total_users = db.query(User).count()
+        active_users = db.query(User).filter(User.is_active == True).count()
+        inactive_users = db.query(User).filter(User.is_active == False).count()
+        blocked_users = db.query(User).filter(User.is_blocked == True).count()
+        admin_users = db.query(User).filter(User.is_admin == True).count()
+        users_with_phone = db.query(User).filter(User.phone.isnot(None)).count()
+        users_without_phone = db.query(User).filter(User.phone.is_(None)).count()
+        users_with_location = db.query(User).filter(
+            User.latitude.isnot(None), 
+            User.longitude.isnot(None)
+        ).count()
+        users_without_location = db.query(User).filter(
+            or_(User.latitude.is_(None), User.longitude.is_(None))
+        ).count()
+        
+        return Success({
+            "total_users": total_users,
+            "active_users": active_users,
+            "inactive_users": inactive_users,
+            "blocked_users": blocked_users,
+            "admin_users": admin_users,
+            "users_with_phone": users_with_phone,
+            "users_without_phone": users_without_phone,
+            "users_with_location": users_with_location,
+            "users_without_location": users_without_location
+        })
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+
+
