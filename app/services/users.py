@@ -211,7 +211,7 @@ def unlock_user_by(email: EmailStr, db: Session) -> Success | Failure:
     if not user.is_blocked:
         return Failure(UserIsNotBlocked())
 
-    return block_user_db(db, user)
+    return unlock_user_db(db, user)
 
 
 async def send_password_reset_link(email: str) -> Success | Failure:
