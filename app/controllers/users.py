@@ -1,5 +1,6 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Optional
 from app.schemas.email import Email
 from app.schemas.query import Query
 from pytest import Session
@@ -23,6 +24,7 @@ from app.services.users import (
     search_users_service,
     get_user_by_id_service,
     get_users_batch_service,
+    get_user_stats_service,
 )
 from app.schemas.user import (
     UserProfileResponse,
@@ -30,6 +32,7 @@ from app.schemas.user import (
     UserProfileUpdate,
     UsersSearchResponse,
     UsersBatchRequest,
+    UserStatsResponse,
 )
 from app.common.http_responses.forgot_password import forgot_password_responses
 
@@ -292,3 +295,39 @@ async def forgot_password(request: Email):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
     return {"message": result.value}
+
+
+# Admin endpoints
+@router.get(
+    "/admin/stats",
+    response_model=UserStatsResponse,
+    status_code=200,
+    responses={
+        401: {"model": ErrorResponse, "description": "Unauthorized or admin permissions required"},
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def get_user_stats(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    result = extract_token_from_request(request)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    token = result.value
+    result = get_user_stats_service(db, token)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    stats = result.value
+    from app.schemas.user import UserStatsData
+    stats_data = UserStatsData(**stats)
+    
+    return UserStatsResponse(data=stats_data)
+
+
+
