@@ -189,9 +189,7 @@ def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
     if user.is_admin:
         return Failure(UserIsAlreadyAnAdmin())
 
-    update_data = UserProfileUpdate(is_admin=True)
-
-    return update_user_profile_db(db, user, update_data)
+    return make_admin_db(db, user)
 
 
 def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
@@ -202,9 +200,7 @@ def block_user_by(email: EmailStr, db: Session) -> Success | Failure:
     if user.is_blocked:
         return Failure(UserIsAlreadyBlocked())
 
-    update_data = UserProfileUpdate(is_blocked=True)
-
-    return update_user_profile_db(db, user, update_data)
+    return block_user_db(db, user)
 
 
 def unlock_user_by(email: EmailStr, db: Session) -> Success | Failure:
@@ -215,9 +211,7 @@ def unlock_user_by(email: EmailStr, db: Session) -> Success | Failure:
     if not user.is_blocked:
         return Failure(UserIsNotBlocked())
 
-    update_data = UserProfileUpdate(is_blocked=False)
-
-    return update_user_profile_db(db, user, update_data)
+    return block_user_db(db, user)
 
 
 async def send_password_reset_link(email: str) -> Success | Failure:
