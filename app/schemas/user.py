@@ -78,5 +78,11 @@ class UserStatsData(BaseModel):
 
 class UserStatsResponse(BaseModel):
     data: UserStatsData
+
+
 class UserIsActiveResponse(BaseModel):
     is_active: bool
+
+
+class UserIsAdminResponse(BaseModel):
+    is_admin: bool
