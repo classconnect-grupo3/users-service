@@ -9,6 +9,7 @@ from app.common.http_responses.make_admin import make_admin_response
 from app.common.http_responses.block_user import block_user_response
 from app.common.http_responses.unlock_user import unlock_user_response
 from app.common.http_responses.is_active import is_active_response
+from app.schemas.user import UserStatsData
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -321,7 +322,10 @@ async def forgot_password(request: Email):
     response_model=UserStatsResponse,
     status_code=200,
     responses={
-        401: {"model": ErrorResponse, "description": "Unauthorized or admin permissions required"},
+        401: {
+            "model": ErrorResponse,
+            "description": "Unauthorized or admin permissions required",
+        },
         500: {"model": ErrorResponse, "description": "Server error"},
     },
 )
@@ -343,10 +347,10 @@ def get_user_stats(
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
     stats = result.value
-    from app.schemas.user import UserStatsData
     stats_data = UserStatsData(**stats)
-    
+
     return UserStatsResponse(data=stats_data)
+
 
 @router.get(
     "/{email}/is-active",
