@@ -10,9 +10,6 @@ from app.common.result import Failure, Success
 from app.errors.database_errors import DatabaseError
 from sqlalchemy.orm import Session
 
-from app.models.user_model import User
-
-
 def store_location_db(db: Session, uid: str, latitude: float, longitude: float):
     user = db.query(User).filter(User.uid == uid).first()
     user.latitude = latitude
@@ -99,5 +96,66 @@ def store_user_in_db(
         db.commit()
         db.refresh(db_user)
         return Success(db_user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+def unlock_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = False
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+def block_user_db(db: Session, user: User):
+    try:
+        user.is_blocked = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+
+def make_admin_db(db: Session, user: User):
+    try:
+        user.is_admin = True
+        db.commit()
+        db.refresh(user)
+        return Success(user)
+    except Exception as e:
+        return Failure(DatabaseError(str(e)))
+
+
+# Admin metrics functions
+def get_user_stats_db(db: Session) -> Success | Failure:
+    try:
+        total_users = db.query(User).count()
+        active_users = db.query(User).filter(User.is_active == True).count()
+        inactive_users = db.query(User).filter(User.is_active == False).count()
+        blocked_users = db.query(User).filter(User.is_blocked == True).count()
+        admin_users = db.query(User).filter(User.is_admin == True).count()
+        users_with_phone = db.query(User).filter(User.phone.isnot(None)).count()
+        users_without_phone = db.query(User).filter(User.phone.is_(None)).count()
+        users_with_location = db.query(User).filter(
+            User.latitude.isnot(None), 
+            User.longitude.isnot(None)
+        ).count()
+        users_without_location = db.query(User).filter(
+            or_(User.latitude.is_(None), User.longitude.is_(None))
+        ).count()
+        
+        return Success({
+            "total_users": total_users,
+            "active_users": active_users,
+            "inactive_users": inactive_users,
+            "blocked_users": blocked_users,
+            "admin_users": admin_users,
+            "users_with_phone": users_with_phone,
+            "users_without_phone": users_without_phone,
+            "users_with_location": users_with_location,
+            "users_without_location": users_without_location
+        })
     except Exception as e:
         return Failure(DatabaseError(str(e)))

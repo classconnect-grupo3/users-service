@@ -1,11 +1,15 @@
 # Store user location
 from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Optional
 from app.schemas.email import Email
+from pydantic import EmailStr
 from app.schemas.query import Query
 from pytest import Session
 from app.common.http_responses.make_admin import make_admin_response
 from app.common.http_responses.block_user import block_user_response
-
+from app.common.http_responses.unlock_user import unlock_user_response
+from app.common.http_responses.is_active import is_active_response
+from app.schemas.user import UserStatsData
 
 from app.common.result import Failure
 from app.database.db import get_db
@@ -23,6 +27,9 @@ from app.services.users import (
     search_users_service,
     get_user_by_id_service,
     get_users_batch_service,
+    get_user_stats_service,
+    unlock_user_by,
+    is_user_active_by_email,
 )
 from app.schemas.user import (
     UserProfileResponse,
@@ -30,6 +37,8 @@ from app.schemas.user import (
     UserProfileUpdate,
     UsersSearchResponse,
     UsersBatchRequest,
+    UserStatsResponse,
+    UserIsActiveResponse,
 )
 from app.common.http_responses.forgot_password import forgot_password_responses
 
@@ -281,6 +290,19 @@ def block_user(request: Email, db: Session = Depends(get_db)):
     return UserProfileResponse(data=profile_data)
 
 
+@router.post("/unlock", status_code=201, responses=unlock_user_response)
+def unlock_user(request: Email, db: Session = Depends(get_db)):
+    result = unlock_user_by(request.email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    user: User = result.value
+    profile_data = UserProfileData.model_validate(user)
+
+    return UserProfileResponse(data=profile_data)
+
+
 @router.post(
     "/forgot-password",
     status_code=202,
@@ -292,3 +314,56 @@ async def forgot_password(request: Email):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
     return {"message": result.value}
+
+
+# Admin endpoints
+@router.get(
+    "/admin/stats",
+    response_model=UserStatsResponse,
+    status_code=200,
+    responses={
+        401: {
+            "model": ErrorResponse,
+            "description": "Unauthorized or admin permissions required",
+        },
+        500: {"model": ErrorResponse, "description": "Server error"},
+    },
+)
+def get_user_stats(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    result = extract_token_from_request(request)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    token = result.value
+    result = get_user_stats_service(db, token)
+
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    stats = result.value
+    stats_data = UserStatsData(**stats)
+
+    return UserStatsResponse(data=stats_data)
+
+
+@router.get(
+    "/{email}/is-active",
+    status_code=200,
+    response_model=UserIsActiveResponse,
+    responses=is_active_response,
+)
+def is_user_active(email: str, db: Session = Depends(get_db)):
+    result = is_user_active_by_email(email, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    is_active = result.value
+
+    return UserIsActiveResponse(is_active=is_active)

@@ -30,6 +30,11 @@ class UserIsAlreadyBlocked(GenericError):
         super().__init__(message, http_status_code=400)
 
 
+class UserIsNotBlocked(GenericError):
+    def __init__(self, message: str = "User is not blocked"):
+        super().__init__(message, http_status_code=400)
+
+
 class EmptySearchTermsError(GenericError):
     def __init__(
         self,
