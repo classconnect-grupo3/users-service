@@ -30,6 +30,7 @@ from app.services.users import (
     get_user_stats_service,
     unlock_user_by,
     is_user_active_by_email,
+    is_user_admin_by_uid,
 )
 from app.schemas.user import (
     UserProfileResponse,
@@ -39,8 +40,10 @@ from app.schemas.user import (
     UsersBatchRequest,
     UserStatsResponse,
     UserIsActiveResponse,
+    UserIsAdminResponse,
 )
 from app.common.http_responses.forgot_password import forgot_password_responses
+from app.common.http_responses.is_admin import is_admin_response
 
 router = APIRouter()
 
@@ -367,3 +370,19 @@ def is_user_active(email: str, db: Session = Depends(get_db)):
     is_active = result.value
 
     return UserIsActiveResponse(is_active=is_active)
+
+
+@router.get(
+    "/{user_id}/is-admin",
+    status_code=200,
+    response_model=UserIsAdminResponse,
+    responses=is_admin_response,
+)
+def is_user_admin(user_id: str, db: Session = Depends(get_db)):
+    result = is_user_admin_by_uid(user_id, db)
+    if isinstance(result, Failure):
+        error = result.error
+        raise HTTPException(status_code=error.http_status_code, detail=error.message)
+
+    is_admin = result.value
+    return UserIsAdminResponse(is_admin=is_admin)
