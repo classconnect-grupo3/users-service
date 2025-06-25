@@ -180,6 +180,12 @@ def is_user_active_by_email(email: str, db: Session) -> Success | Failure:
     return Success(user.is_active)
 
 
+def is_user_admin_by_uid(user_id: str, db: Session) -> Success | Failure:
+    user = get_user_by_uid_db(db, user_id)
+    if not user:
+        return Failure(UserNotFoundError())
+    return Success(user.is_admin)
+
 
 def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
     user = get_user_by_email_db(db, email)
@@ -257,7 +263,7 @@ def verify_admin_permissions(db: Session, token: str) -> Success | Failure:
 
     if not user:
         return Failure(UserNotFoundError())
-    
+
     if not user.is_admin:
         return Failure(InvalidTokenError(message="Admin permissions required"))
 
@@ -268,8 +274,5 @@ def get_user_stats_service(db: Session, token: str) -> Success | Failure:
     result = verify_admin_permissions(db, token)
     if isinstance(result, Failure):
         return result
-    
+
     return get_user_stats_db(db)
-
-
-
