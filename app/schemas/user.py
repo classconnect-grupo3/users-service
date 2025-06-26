@@ -86,3 +86,4 @@ class UserIsActiveResponse(BaseModel):
 
 class UserIsAdminResponse(BaseModel):
     is_admin: bool
+    email: str
