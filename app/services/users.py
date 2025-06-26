@@ -184,7 +184,7 @@ def is_user_admin_by_uid(user_id: str, db: Session) -> Success | Failure:
     user = get_user_by_uid_db(db, user_id)
     if not user:
         return Failure(UserNotFoundError())
-    return Success(user.is_admin)
+    return Success({"is_admin": user.is_admin, "email": user.email})
 
 
 def make_admin_by(email: EmailStr, db: Session) -> Success | Failure:
