@@ -384,5 +384,5 @@ def is_user_admin(user_id: str, db: Session = Depends(get_db)):
         error = result.error
         raise HTTPException(status_code=error.http_status_code, detail=error.message)
 
-    is_admin = result.value
-    return UserIsAdminResponse(is_admin=is_admin)
+    user_data = result.value
+    return UserIsAdminResponse(is_admin=user_data["is_admin"], email=user_data["email"])
